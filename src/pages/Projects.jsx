@@ -10,7 +10,8 @@ import modulesImg from "../assets/modules_400x600.webp";
 
 import dcjsUtil from "../assets/dcjs-util_400x600.webp";
 
-import sudokuWeb from "../assets/sudoku-web_400x600.webp"
+import sudokuWeb from "../assets/sudoku-web_400x600.webp";
+import personalPortfolio from "../assets/personal-portfolio.webp";
 
 const projectIcons = {
   // Discord Botları
@@ -28,7 +29,8 @@ const projectIcons = {
   "alisa.cache": modulesImg,
 
   // Web
-  "sudoku-pdf-generator": sudokuWeb
+  "sudoku-pdf-generator": sudokuWeb,
+  "personal-portfolio": personalPortfolio
 }
 
 function Projects() {

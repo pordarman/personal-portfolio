@@ -55,8 +55,8 @@ function ProjectCard({ project }) {
 
         {/* Dates (Tarihler) */}
         <div className="text-xs text-gray-500 mb-4">
-          <p>Created: {formatDate(createdAt)}</p>
           <p>Last Updated: {formatDate(updatedAt)}</p>
+          <p>Created: {formatDate(createdAt)}</p>
         </div>
 
         {/* Links (Bağlantılar) */}
