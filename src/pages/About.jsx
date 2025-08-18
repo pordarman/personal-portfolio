@@ -15,7 +15,7 @@ function About() {
         </div>
         <div className="max-w-3xl mx-auto mb-20">
           <h3 className="text-3xl font-bold text-center mb-8 border-b-2 border-cyan-500 pb-2 text-slate-900 dark:text-white">My Journey</h3>
-          <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+          <div className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
 
             <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
               About Me
@@ -34,7 +34,7 @@ function About() {
               Driven by curiosity, I began exploring other languages. After researching titans like Java, C++, and Python, I initially ventured into <span className="font-semibold text-slate-800 dark:text-white">Python</span> for its versatility. However, my true calling was in creating interactive experiences. This led me to game development with <span className="font-semibold text-cyan-600 dark:text-cyan-400">C# and Unity</span>, where I could merge my creativity with my coding skills. Currently, I'm actively developing a <span className="font-semibold text-slate-800 dark:text-white">2D top-down pixel art game</span>, a project that I'm incredibly passionate about.
             </p>
 
-            </p>
+            </div>
         </div>
       </div>
     </section>
