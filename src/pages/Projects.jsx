@@ -13,25 +13,67 @@ import dcjsUtil from "../assets/dcjs-util_400x600.webp";
 import sudokuWeb from "../assets/sudoku-web_400x600.webp";
 import personalPortfolio from "../assets/personal-portfolio.webp";
 
-const projectIcons = {
+const projectsSettings = {
   // Discord Botları
-  "alisa": alisaAvatar,
-  "ultimate-ticket-bot": ultimeTicketBot,
-  "ultimate-stat-bot": ultimateStatBot,
-  "dcjs-util": dcjsUtil,
+  "alisa": {
+    icon: alisaAvatar,
+    onGoing: false,
+  },
+  "ultimate-ticket-bot": {
+    icon: ultimeTicketBot,
+    onGoing: false,
+  },
+  "ultimate-stat-bot": {
+    icon: ultimateStatBot,
+    onGoing: false,
+  },
+  "dcjs-util": {
+    icon: dcjsUtil,
+    onGoing: false,
+  },
 
   // NPM modülleri
-  "alisa.db": modulesImg,
-  "alisa.map": modulesImg,
-  "Strong-Set": modulesImg,
-  "alisa.array": modulesImg,
-  "alisa.ms": modulesImg,
-  "alisa.cache": modulesImg,
+  "alisa.db": {
+    icon: modulesImg,
+    onGoing: false,
+    npmLink: "https://www.npmjs.com/package/alisa.db"
+  },
+  "alisa.map": {
+    icon: modulesImg,
+    onGoing: false,
+    npmLink: "https://www.npmjs.com/package/alisa.map"
+  },
+  "Strong-Set": {
+    icon: modulesImg,
+    onGoing: false,
+    npmLink: "https://www.npmjs.com/package/strong-set"
+  },
+  "alisa.array": {
+    icon: modulesImg,
+    onGoing: false,
+    npmLink: "https://www.npmjs.com/package/alisa.array"
+  },
+  "alisa.ms": {
+    icon: modulesImg,
+    onGoing: false,
+    npmLink: "https://www.npmjs.com/package/alisa.ms"
+  },
+  "alisa.cache": {
+    icon: modulesImg,
+    onGoing: false,
+    npmLink: "https://www.npmjs.com/package/alisa.cache"
+  },
 
   // Web
-  "sudoku-pdf-generator": sudokuWeb,
-  "personal-portfolio": personalPortfolio
-}
+  "sudoku-pdf-generator": {
+    icon: sudokuWeb,
+    onGoing: true,
+  },
+  "personal-portfolio": {
+    icon: personalPortfolio,
+    onGoing: true,
+  }
+};
 
 function Projects() {
   const [projects, setProjects] = useState([]);
@@ -77,13 +119,15 @@ function Projects() {
               project={{
                 title: project.name,
                 description: project.description || "No description available for this project.",
-                imageUrl: projectIcons[project.name] || `https://placehold.co/600x400/1e293b/ffffff?text=${project.name}`,
-                projectUrl: project.homepage || project.html_url,
+                imageUrl: projectsSettings[project.name]?.icon || `https://placehold.co/600x400/1e293b/ffffff?text=${project.name}`,
+                projectUrl: project.homepage,
                 githubUrl: project.html_url,
+                npmLink: projectsSettings[project.name]?.npmLink,
                 stars: project.stargazers_count,
                 topics: project.topics,
                 createdAt: project.created_at,
                 updatedAt: project.updated_at,
+                onGoing: projectsSettings[project.name]?.onGoing || false,
               }} 
             />
           ))}

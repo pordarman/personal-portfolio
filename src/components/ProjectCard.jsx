@@ -1,3 +1,4 @@
+import OnGoingCard from "./OnGoingCard";
 // Star Icon SVG"si
 const StarIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-1 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -8,7 +9,7 @@ const StarIcon = () => (
 function ProjectCard({ project }) {
 
   // Yeni verileri props"tan alıyoruz
-  const { title, description, imageUrl, projectUrl, githubUrl, stars, topics, updatedAt, createdAt } = project;
+  const { title, description, imageUrl, projectUrl, githubUrl, stars, topics, updatedAt, createdAt, npmLink, onGoing } = project;
 
   // Tarihleri daha okunabilir bir formata çeviren fonksiyon
   const formatDate = (dateString) => {
@@ -21,16 +22,19 @@ function ProjectCard({ project }) {
 
   return (
     <div className="bg-slate-200 dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/50 transition-shadow duration-300 flex flex-col h-full">
-      <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-        <img
-          className="w-full h-68 object-cover"
-          src={imageUrl}
-          alt={`${title} projesinin ekran görüntüsü`}
-          onError={(e) => {
-            e.target.onerror = null;
-          }}
-        />
-      </a>
+      <div className="relative w-full aspect-video overflow-hidden">
+        <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+          <img
+            className="w-full h-68 object-cover"
+            src={imageUrl}
+            alt={`${title} projesinin ekran görüntüsü`}
+            onError={(e) => {
+              e.target.onerror = null;
+            }}
+          />
+        </a>
+        {onGoing && <OnGoingCard />}
+      </div>
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-xl font-bold text-slate-1200 dark:text-white pr-2"><a href={githubUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-600 underline">{title}</a></h3>
@@ -62,7 +66,19 @@ function ProjectCard({ project }) {
         {/* Links (Bağlantılar) */}
         <div className="mt-auto pt-4 border-t border-slate-700 flex space-x-4">
           {
-            projectUrl !== githubUrl ? (<>
+            (npmLink && (
+              <a
+                href={npmLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-red-600 text-slate-900 text-white py-2 px-4 rounded-md hover:bg-cyan-700 transition-colors duration-300 w-full text-center"
+              >
+                See Npm Package
+              </a>
+            ))
+          }
+          {
+            (projectUrl && (
               <a
                 href={projectUrl}
                 target="_blank"
@@ -71,6 +87,10 @@ function ProjectCard({ project }) {
               >
                 See Project
               </a>
+            ))
+          }
+          {
+            (githubUrl && (
               <a
                 href={githubUrl}
                 target="_blank"
@@ -79,16 +99,7 @@ function ProjectCard({ project }) {
               >
                 GitHub
               </a>
-            </>) : (
-              <a
-                href={githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-violet-500 dark:bg-gray-700 text-slate-900 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors duration-300 w-full text-center"
-              >
-                GitHub
-              </a>
-            )
+            ))
           }
         </div>
       </div>

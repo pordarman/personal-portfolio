@@ -1,4 +1,4 @@
-import React from "react";
+import OnGoingCard from "./OnGoingCard";
 
 function FeaturedProjectCard({ project }) {
   const { title, description, imageUrl, projectUrl, startDate, status } = project;
@@ -19,13 +19,7 @@ function FeaturedProjectCard({ project }) {
           />
         </a>
         {/* Eğer proje durumu "ongoing" ise kurdeleyi göster */}
-        {status === "ongoing" && (
-          <div className="absolute top-0 right-0 w-32 h-32">
-            <div className="absolute transform rotate-45 dark:bg-red-600 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px]">
-              <span className="block">On Going</span>
-            </div>
-          </div>
-        )}
+        {status === "ongoing" && <OnGoingCard />}
       </div>
 
       <div className="p-6 flex flex-col flex-grow item-center justify-center text-center">
