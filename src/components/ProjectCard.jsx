@@ -71,7 +71,7 @@ function ProjectCard({ project }) {
                 href={npmLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-red-600 text-slate-900 text-white py-2 px-4 rounded-md hover:bg-cyan-700 transition-colors duration-300 w-full text-center"
+                className="bg-red-600 text-slate-900 text-white py-2 px-4 rounded-md hover:bg-red-500 transition-colors duration-300 w-full text-center"
               >
                 See Npm Package
               </a>
