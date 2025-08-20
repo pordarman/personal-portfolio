@@ -1,4 +1,6 @@
 import OnGoingCard from "./OnGoingCard";
+import DateUtils from "../utils/DateUtils";
+
 // Star Icon SVG"si
 const StarIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-1 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -10,15 +12,6 @@ function ProjectCard({ project }) {
 
   // Yeni verileri props"tan alıyoruz
   const { title, description, imageUrl, projectUrl, githubUrl, stars, topics, updatedAt, createdAt, npmLink, onGoing } = project;
-
-  // Tarihleri daha okunabilir bir formata çeviren fonksiyon
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("tr-TR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
-  };
 
   return (
     <div className="bg-slate-200 dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/50 transition-shadow duration-300 flex flex-col h-full">
@@ -59,8 +52,8 @@ function ProjectCard({ project }) {
 
         {/* Dates (Tarihler) */}
         <div className="text-xs text-gray-500 mb-4">
-          <p>Last Updated: {formatDate(updatedAt)}</p>
-          <p>Created: {formatDate(createdAt)}</p>
+          <p>Last Updated: {DateUtils.formatDate(updatedAt)}</p>
+          <p>Created: {DateUtils.formatDate(createdAt)}</p>
         </div>
 
         {/* Links (Bağlantılar) */}
