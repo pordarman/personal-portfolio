@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect } from "react";
 
 // Sabit Bileşenler
 import Header from "./components/Header";
@@ -14,6 +15,23 @@ import Projects from "./pages/Projects";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
+// Sayfalar her değiştiğinde Google Analytics'e bilgi gönder
+const GA_MEASUREMENT_ID = "G-EWGR3C0L08";
+const AnalyticsTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // gtag fonksiyonunun tarayıcıda tanımlı olup olmadığını kontrol et
+    if (typeof window.gtag === "function") {
+      window.gtag("config", GA_MEASUREMENT_ID, {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location]); // Sadece "location" değiştiğinde bu kod çalışacak
+
+  return null; // Bu bileşen ekranda bir şey göstermez
+};
+
 function App() {
   const location = useLocation();
 
@@ -21,7 +39,8 @@ function App() {
     <div className="bg-slate-100 dark:bg-gradient-to-b dark:from-slate-900 dark:to-gray-900 min-h-screen flex flex-col transition-colors duration-300">
       <Header />
       <ScrollToTop />
-      
+      <AnalyticsTracker />
+
       <AnimatePresence mode="wait">
         <motion.main
           key={location.pathname}
