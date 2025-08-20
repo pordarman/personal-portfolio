@@ -163,6 +163,12 @@ function Projects() {
       );
     }
 
+    function setDateToEnd(dateString) {
+      const date = new Date(dateString);
+      date.setHours(23, 59, 59, 999); // Günün tamamını alması için
+      return date;
+    }
+
     for (const project of projects) {
       if (
         // 1. Metin bazlı arama filtresi
@@ -170,11 +176,11 @@ function Projects() {
 
         // 2. Oluşturulma tarihi filtresi
         (dateFilters.created.start && new Date(project.created_at) < new Date(dateFilters.created.start)) ||
-        (dateFilters.created.end && new Date(project.created_at) > new Date(dateFilters.created.end)) ||
+        (dateFilters.created.end && new Date(project.created_at) > setDateToEnd(dateFilters.created.end)) ||
 
         // 3. Güncellenme tarihi filtresi
         (dateFilters.updated.start && new Date(project.updated_at) < new Date(dateFilters.updated.start)) ||
-        (dateFilters.updated.end && new Date(project.updated_at) > new Date(dateFilters.updated.end))
+        (dateFilters.updated.end && new Date(project.updated_at) > setDateToEnd(dateFilters.updated.end))
       ) {
         continue; // Eğer proje sağlanan filtreleri geçmiyorsa atla
       }
