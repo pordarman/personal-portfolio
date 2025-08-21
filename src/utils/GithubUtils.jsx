@@ -5,6 +5,8 @@ const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const GITHUB_USERNAME = "pordarman";
 const GITHUB_API_URL = "https://api.github.com";
 
+const EXPIRES_IN = 30 * 60 * 1000; // 30 dakika
+
 /**
  * GitHub projelerini çeker
  * @param {"updated" | "created" | "pushed" | "full_name"} sort Sıralama kriteri
@@ -30,8 +32,8 @@ export const fetchProjectsGithub = async (sort = "updated", order = "desc") => {
     });
     const result = response.data.filter(repo => repo.name !== GITHUB_USERNAME);
 
-    // Tarayıcının önbelleğine yükle ve 10 dakikalık sınır koy
-    sessionStorage.setItem(cacheKey, JSON.stringify({ data: result, expires: Date.now() + 10 * 60 * 1000 }));
+    // Tarayıcının önbelleğine yükle ve sınır koy
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data: result, expires: Date.now() + EXPIRES_IN }));
     return result;
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -46,10 +48,22 @@ export const fetchProjectsGithub = async (sort = "updated", order = "desc") => {
  */
 export const fetchProjectByName = async (repoName) => {
   try {
-    // Önbellek kontrolü yapabiliriz ama şimdilik basit tutalım
+    // Önbellek kontrolü
+    const cacheKey = `github_project_${repoName}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      const { data, expires } = JSON.parse(cached);
+      if (Date.now() < expires) {
+        return data;
+      }
+      sessionStorage.removeItem(cacheKey);
+    }
+
     const response = await axios.get(`${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}`, {
       headers: { Authorization: `token ${TOKEN}` }
     });
+    // Tarayıcının önbelleğine yükle ve sınır koy
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data: response.data, expires: Date.now() + EXPIRES_IN }));
     return response.data;
   } catch (error) {
     console.error(`Error fetching project ${repoName}:`, error);
@@ -64,6 +78,17 @@ export const fetchProjectByName = async (repoName) => {
  */
 export const fetchProjectReadme = async (repoName) => {
   try {
+    // Önbellek kontrolü
+    const cacheKey = `github_readme_${repoName}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      const { data, expires } = JSON.parse(cached);
+      if (Date.now() < expires) {
+        return data;
+      }
+      sessionStorage.removeItem(cacheKey);
+    }
+
     const response = await axios.get(`${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}/readme`, {
       headers: { 
         Authorization: `token ${TOKEN}`,
@@ -72,7 +97,9 @@ export const fetchProjectReadme = async (repoName) => {
        }
     });
     const result = Base64.decode(response.data.content);
-    console.log(result);
+
+    // Tarayıcının önbelleğine yükle ve sınır koy
+    sessionStorage.setItem(cacheKey, JSON.stringify({ data: result, expires: Date.now() + EXPIRES_IN }));
     return result;
   } catch (error) {
     console.error(`Error fetching README for ${repoName}:`, error);
