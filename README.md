@@ -39,7 +39,7 @@ This project was built using a curated selection of modern web development techn
 ## **📂 Project Structure**
 
 The project follows a logical and organized folder structure to keep the codebase clean and maintainable.
-```
+```shell
 /  
 ├── public/  
 ├── src/  
@@ -51,6 +51,7 @@ The project follows a logical and organized folder structure to keep the codebas
 │   ├── App.jsx         # Main application component with routing logic  
 │   ├── index.css       # Global CSS and Tailwind directives  
 │   └── main.jsx        # Application entry point  
+├── .env  
 ├── .eslintrc.cjs  
 ├── .gitignore  
 ├── index.html  
@@ -74,17 +75,17 @@ Make sure you have Node.js (version 18 or higher) and npm installed on your mach
 ### **Installation**
 
 1. **Clone the repository**  
-   ```
+   ```shell
    git clone https://github.com/pordarman/personal-portfolio.git
    ```
 
 2. **Navigate to the project directory**  
-   ```
+   ```shell
    cd personal-portfolio
    ```
 
 3. **Install NPM packages**  
-   ```
+   ```shell
    npm install
    ```
 
@@ -94,15 +95,30 @@ To fetch data from the GitHub API, you need to create a Personal Access Token (P
 
 1. Create a `.env` file in the root of the project.  
 2. Add your GitHub PAT to the `.env` file as shown below:  
-   ```
+   ```shell
    VITE_GITHUB_TOKEN=your_github_personal_access_token  
    ```
    You can generate a new token from your GitHub settings: [GitHub Developer Settings](https://github.com/settings/tokens). The token only needs `public_repo` scope.
+3. Add your EmailJS variable to the `.env` file as shown below:
+   ```shell
+   VITE_EMAILJS_SERVICE_ID=service_id
+   VITE_EMAILJS_TEMPLATE_ID=template_id
+   VITE_EMAILJS_PUBLIC_KEY=your_public_key
+   ```
+   ### **EmailJS Integration**
+
+   This project uses [EmailJS](https://www.emailjs.com/) to enable contact form submissions directly from the frontend without a backend server. You need to set up your EmailJS account and configure the following environment variables:
+
+   - `VITE_EMAILJS_SERVICE_ID`: Your EmailJS service ID.
+   - `VITE_EMAILJS_TEMPLATE_ID`: The template ID for your email.
+   - `VITE_EMAILJS_PUBLIC_KEY`: Your EmailJS public key.
+
+   Refer to the [EmailJS documentation](https://www.emailjs.com/docs/) for detailed setup instructions.
 
 ### **Running the Application**
 
 Once the dependencies are installed and the environment variable is set, you can run the development server:
-```
+```shell
 npm run dev
 ```
 This will start the Vite development server, and you can view the application at `http://localhost:5173`.
@@ -112,7 +128,7 @@ This will start the Vite development server, and you can view the application at
 This project is deployed on **Vercel**. The deployment process is automated via GitHub integration, meaning any push to the main branch triggers a new build and deployment.
 
 For the client-side routing to work correctly on Vercel, a vercel.json file is included with a rewrite rule. This rule ensures that all requests to non-existent paths are redirected to index.html, allowing React Router to handle the routing.
-```
+```json
 {  
   "rewrites": [  
     {  
