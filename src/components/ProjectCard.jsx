@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import OnGoingCard from "./OnGoingCard";
 import DateUtils from "../utils/DateUtils";
 
@@ -30,7 +31,7 @@ function ProjectCard({ project }) {
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-slate-1200 dark:text-white pr-2"><a href={githubUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-600 underline">{title}</a></h3>
+          <h3 className="text-xl font-bold text-slate-1200 dark:text-white pr-2"><Link to={`/projects/${title}`} className="text-blue-500 dark:text-blue-600 underline">{title}</Link></h3>
           <div className="flex items-center text-slate-900 dark:text-white flex-shrink-0">
             <StarIcon />
             <span>{stars}</span>

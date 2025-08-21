@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
-import fetchProjectsGithub from "../utils/fetchProjectsGithub";
+import { fetchProjectsGithub } from "../utils/GithubUtils";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
 // Images
