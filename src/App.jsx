@@ -14,6 +14,8 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
+import BlogList from "./pages/BlogList";
+import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
@@ -56,7 +58,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:projectName" element={<ProjectDetail />} />
+            <Route path="/projects/:projectId" element={<ProjectDetail />} />
+            <Route path="/blogs" element={<BlogList />} />
+            <Route path="/blogs/:blogId" element={<BlogDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

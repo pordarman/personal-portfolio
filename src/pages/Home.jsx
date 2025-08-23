@@ -3,7 +3,8 @@ import Hero from "../components/Hero";
 import FeaturedProjectCard from "../components/FeaturedProjectCard";
 
 import sudokuWebIcon from "../assets/sudoku-web.webp";
-import spiritfallIcon from "../assets/spiritfall_preview.webp"
+import spiritfallIcon from "../assets/spiritfall_preview.webp";
+import alisaIcon from "../assets/alisa-avatar_400x600.webp";
 
 const skills = [
     { name: "JavaScript", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", clickUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" },
@@ -22,21 +23,30 @@ const skills = [
 const myFeaturedProjects = [
     {
         id: 1,
-        title: "Spiritfall - 2D Pixel Game with C# & Unity",
+        title: "Spiritfall - 2D Pixel Game",
         description: "Face a corrupted wilderness in this top-down action roguelite. A vile spirit has twisted animals into monsters, and you must survive their hordes. Your goal: purify, don't kill. Level up by cleansing spirits and combine powerful abilities to create devastating builds against the ever-growing threat.",
         imageUrl: spiritfallIcon,
         projectUrl: null,
         startDate: "June 2025",
-        status: "ongoing",
+        onGoing: true,
     },
     {
         id: 2,
-        title: "React Sudoku PDF Generator",
+        title: "Alisa - Discord Bot",
+        description: "A Discord bot built with JavaScript and Node.js that automates tasks and enhances server engagement. Additional features include show server, user informations and many more. You can find the source code on GitHub.",
+        imageUrl: alisaIcon,
+        projectUrl: "https://github.com/pordarman/alisa",
+        startDate: "May 2021",
+        onGoing: false
+    },
+    {
+        id: 3,
+        title: "Sudoku PDF Generator",
         description: "This React-based web application instantly generates unique Sudoku puzzles and allows users to download and print them in PDF format.",
         imageUrl: sudokuWebIcon,
         projectUrl: "https://pordarman.github.io/sudoku-pdf-generator/",
         startDate: "August 2025",
-        status: "completed",
+        onGoing: true,
     },
 ];
 
@@ -50,7 +60,7 @@ function Home() {
                         <h2 className="text-4xl font-bold text-slate-900 dark:text-white">My Featured Projects</h2>
                         <p className="text-gray-600 dark:text-gray-400 mt-2">Here are some of the works I'm most proud of.</p>
                     </div>
-                    <div className="flex flex-wrap justify-center items-stretch gap-8">
+                    <div className="flex flex-wrap justify-center items-stretch gap-5">
                         {myFeaturedProjects.map(project => (
                             <FeaturedProjectCard key={project.id} project={project} />
                         ))}

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import emailjs from '@emailjs/browser';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
 // İkonlar için SVG bileşenleri

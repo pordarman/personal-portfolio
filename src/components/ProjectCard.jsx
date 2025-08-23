@@ -10,9 +10,8 @@ const StarIcon = () => (
 );
 
 function ProjectCard({ project }) {
-
   // Yeni verileri props"tan alıyoruz
-  const { title, description, imageUrl, projectUrl, githubUrl, stars, topics, updatedAt, createdAt, npmLink, onGoing } = project;
+  const { id, name, tags, description, imageUrl, projectUrl, githubUrl, stars, updatedAt, createdAt, npmLink, onGoing, source } = project;
 
   return (
     <div className="bg-slate-200 dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/50 transition-shadow duration-300 flex flex-col h-full">
@@ -21,7 +20,7 @@ function ProjectCard({ project }) {
           <img
             className="w-full h-68 object-cover"
             src={imageUrl}
-            alt={`${title} projesinin ekran görüntüsü`}
+            alt={`${name} projesinin ekran görüntüsü`}
             onError={(e) => {
               e.target.onerror = null;
             }}
@@ -31,17 +30,25 @@ function ProjectCard({ project }) {
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-slate-1200 dark:text-white pr-2"><Link to={`/projects/${title}`} className="text-blue-500 dark:text-blue-600 underline">{title}</Link></h3>
-          <div className="flex items-center text-slate-900 dark:text-white flex-shrink-0">
-            <StarIcon />
-            <span>{stars}</span>
-          </div>
+          <h3 className="text-xl font-bold text-slate-1200 dark:text-white pr-2"><Link to={`/projects/${id}`} className="text-blue-500 dark:text-blue-600 underline">{name}</Link></h3>
+          {source === 'github' ? (
+            <div className="flex items-center text-slate-900 dark:text-white flex-shrink-0">
+              <StarIcon />
+              <span>{stars}</span>
+            </div>
+          ) : (
+            <div className="flex items-center text-slate-900 dark:text-white flex-shrink-0">
+              <span className="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                Local Project
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Topics (Konular) */}
-        {topics && topics.length > 0 && (
+        {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {topics.map(topic => (
+            {tags.map(topic => (
               <span key={topic} className="bg-gray-300 dark:bg-gray-800 dark:text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
                 {topic}
               </span>

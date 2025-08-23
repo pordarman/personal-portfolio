@@ -1,25 +1,21 @@
 import OnGoingCard from "./OnGoingCard";
 
 function FeaturedProjectCard({ project }) {
-  const { title, description, imageUrl, projectUrl, startDate, status } = project;
+  const { title, description, imageUrl, projectUrl, startDate, onGoing } = project;
 
   return (
-    // 1. Genişliği artırdık: md:w-[400px] -> md:w-[500px]
-    <div className="bf-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/50 transition-shadow duration-300 flex flex-col w-full sm:w-5/6 md:w-[600px]">
+    <div className="bf-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/50 transition-shadow duration-300 flex flex-col w-full sm:w-5/6 md:w-[475px]">
 
-      {/* 2. Resim kapsayıcısına en-boy oranı verdik ve taşmayı engelledik */}
       <div className="relative w-full aspect-video overflow-hidden">
         <a href={imageUrl} target="_blank" rel="noopener noreferrer">
           <img
-            // 3. Resmin sabit yüksekliğini kaldırıp kapsayıcıyı doldurmasını sağladık
             className="w-full h-full object-cover"
             src={imageUrl}
             alt={`${title} projesinin ekran görüntüsü`}
             onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x400/1e2b3c/ffffff?text=Gorsel+Yok"; }}
           />
         </a>
-        {/* Eğer proje durumu "ongoing" ise kurdeleyi göster */}
-        {status === "ongoing" && <OnGoingCard />}
+        {onGoing && <OnGoingCard />}
       </div>
 
       <div className="p-6 flex flex-col flex-grow item-center justify-center text-center">

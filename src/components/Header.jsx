@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import React, { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 
 // Hamburger ve Kapatma ikonları için SVG bileşenleri
@@ -63,6 +64,14 @@ function Header() {
                   className={({ isActive }) => isActive ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors"}
                 >
                   Projects
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/blogs" 
+                  className={({ isActive }) => isActive ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors"}
+                >
+                  Blog
                 </NavLink>
               </li>
               <li>

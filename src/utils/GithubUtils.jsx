@@ -90,11 +90,11 @@ export const fetchProjectReadme = async (repoName) => {
     }
 
     const response = await axios.get(`${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}/readme`, {
-      headers: { 
+      headers: {
         Authorization: `token ${TOKEN}`,
         // GitHub'ın içeriği direkt HTML veya ham metin olarak göndermesini isteyebiliriz,
         // ama varsayılan olarak JSON içinde base64 formatında gönderir.
-       }
+      }
     });
     const result = Base64.decode(response.data.content);
 
@@ -112,12 +112,23 @@ export const fetchProjectReadme = async (repoName) => {
 };
 
 export const markdownToHtml = async (markdown) => {
+  // Önbellek kontrolü
+  const cacheKey = `github_markdown_${markdown}`;
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    return JSON.parse(cached);
+  }
+
   // Markdown'ı HTML'e dönüştürmek için github api'sını kullanacağız
   const response = await axios.post(`${GITHUB_API_URL}/markdown`, {
     text: markdown,
-    mode: "markdown"
+    mode: "gfm"
   }, {
     headers: { Authorization: `token ${TOKEN}` }
   });
-  return response.data;
+  const { data } = response;
+  
+  // Önbelleğe al
+  sessionStorage.setItem(cacheKey, JSON.stringify(data));
+  return data;
 }

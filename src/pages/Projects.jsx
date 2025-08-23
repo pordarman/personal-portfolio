@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 import { fetchProjectsGithub } from "../utils/GithubUtils";
+import { otherProjects } from "../data/otherProjectsData";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -71,10 +72,12 @@ const projectsSettings = {
   "sudoku-pdf-generator": {
     icon: sudokuWeb,
     onGoing: true,
+    order: 3,
   },
   "personal-portfolio": {
     icon: personalPortfolio,
     onGoing: true,
+    order: 2,
   }
 };
 
@@ -115,7 +118,7 @@ const StyledCheckbox = ({ label, name, checked, onChange }) => (
 );
 
 function Projects() {
-  const [projects, setProjects] = useState([]);
+  const [allProjects, setAllProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -126,7 +129,7 @@ function Projects() {
   const [searchIn, setSearchIn] = useState({
     name: true,
     description: true,
-    topics: true,
+    tags: true,
   });
   const [dateFilters, setDateFilters] = useState({
     created: { start: "", end: "" },
@@ -136,9 +139,67 @@ function Projects() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const response = await fetchProjectsGithub();
-        setProjects(response);
-        setFilteredProjects(response);
+        // Hem GitHub'dan hem de yerel dosyadan verileri aynı anda çek
+        const githubRepos = await fetchProjectsGithub();
+
+        // GitHub verilerini standart bir formata dönüştür
+        const githubProjects = githubRepos.map(repo => ({
+          id: repo.name,
+          name: repo.name,
+          description: repo.description || "No description available.",
+          tags: repo.topics || [],
+          imageUrl: projectsSettings[repo.name]?.icon || null,
+          projectUrl: repo.homepage,
+          githubUrl: repo.html_url,
+          npmLink: projectsSettings[repo.name]?.npmLink || null,
+          stars: repo.stargazers_count,
+          createdAt: repo.created_at,
+          updatedAt: repo.updated_at,
+          source: "github",
+          order: projectsSettings[repo.name]?.order || 0,
+          onGoing: projectsSettings[repo.name]?.onGoing || false,
+        }));
+
+        // Sıralama: onGoing -> order -> updatedAt -> createdAt -> name
+        const combinedProjects = [...otherProjects, ...githubProjects].sort((a, b) => {
+          // İlk başta ongoing true olacak şekilde yeniden sırala
+          const aGoing = a.onGoing || projectsSettings[a.name]?.onGoing || false;
+          const bGoing = b.onGoing || projectsSettings[b.name]?.onGoing || false;
+          if (aGoing !== bGoing) {
+            return Number(bGoing) - Number(aGoing); // true önce gelir
+          }
+
+          // Eğer ongoing durumu aynıysa, sıralama için diğer kriterleri kullan
+          const aOrder = a.order || projectsSettings[a.name]?.order || 0;
+          const bOrder = b.order || projectsSettings[b.name]?.order || 0;
+          if (aOrder !== bOrder) {
+            return aOrder - bOrder;
+          }
+
+          // Eğer order durumu aynıysa, güncellenme tarihine göre sırala
+          const aUpdatedAt = a.updatedAt || projectsSettings[a.name]?.updatedAt || 0;
+          const bUpdatedAt = b.updatedAt || projectsSettings[b.name]?.updatedAt || 0;
+          const aUpdatedDate = new Date(aUpdatedAt);
+          const bUpdatedDate = new Date(bUpdatedAt);
+          if (aUpdatedDate !== bUpdatedDate) {
+            return bUpdatedDate - aUpdatedDate;
+          }
+
+          // Eğer güncellenme tarihi de aynıysa, oluşturulma tarihine göre sırala
+          const aCreatedAt = a.createdAt || projectsSettings[a.name]?.createdAt || 0;
+          const bCreatedAt = b.createdAt || projectsSettings[b.name]?.createdAt || 0;
+          const aCreatedDate = new Date(aCreatedAt);
+          const bCreatedDate = new Date(bCreatedAt);
+          if (aCreatedDate !== bCreatedDate) {
+            return bCreatedDate - aCreatedDate;
+          }
+
+          // Eğer oluşturulma tarihi de aynıysa, isme göre sırala
+          return a.name.localeCompare(b.name);
+        });
+
+        setAllProjects(combinedProjects);
+        setFilteredProjects(combinedProjects);
       } catch (err) {
         const errorMessage = err.response
           ? `Error: ${err.response.status} - ${err.response.data.message}`
@@ -160,7 +221,7 @@ function Projects() {
       return (
         (searchIn.name && project.name && project.name.toLowerCase().includes(word)) ||
         (searchIn.description && project.description && project.description.toLowerCase().includes(word)) ||
-        (searchIn.topics && project.topics && project.topics.some(topic => topic.toLowerCase().includes(word)))
+        (searchIn.tags && project.tags && project.tags.some(tag => tag.toLowerCase().includes(word)))
       );
     }
 
@@ -170,18 +231,18 @@ function Projects() {
       return date;
     }
 
-    for (const project of projects) {
+    for (const project of allProjects) {
       if (
         // 1. Metin bazlı arama filtresi
         (words.length > 0 && !words.every(word => checkWord(project, word))) ||
 
         // 2. Oluşturulma tarihi filtresi
-        (dateFilters.created.start && new Date(project.created_at) < new Date(dateFilters.created.start)) ||
-        (dateFilters.created.end && new Date(project.created_at) > setDateToEnd(dateFilters.created.end)) ||
+        (dateFilters.created.start && new Date(project.createdAt) < new Date(dateFilters.created.start)) ||
+        (dateFilters.created.end && new Date(project.createdAt) > setDateToEnd(dateFilters.created.end)) ||
 
         // 3. Güncellenme tarihi filtresi
-        (dateFilters.updated.start && new Date(project.updated_at) < new Date(dateFilters.updated.start)) ||
-        (dateFilters.updated.end && new Date(project.updated_at) > setDateToEnd(dateFilters.updated.end))
+        (dateFilters.updated.start && new Date(project.updatedAt) < new Date(dateFilters.updated.start)) ||
+        (dateFilters.updated.end && new Date(project.updatedAt) > setDateToEnd(dateFilters.updated.end))
       ) {
         continue; // Eğer proje sağlanan filtreleri geçmiyorsa atla
       }
@@ -190,7 +251,7 @@ function Projects() {
     }
 
     setFilteredProjects(resultProjects);
-  }, [searchQuery, searchIn, dateFilters, projects]);
+  }, [searchQuery, searchIn, dateFilters, allProjects]);
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -307,7 +368,7 @@ function Projects() {
 
         {!loading && (
           <p className="text-md text-gray-500 dark:text-gray-400 mt-4 pb-4">
-            Showing <span className="font-bold text-cyan-600 dark:text-cyan-400">{filteredProjects.length}</span> of <span className="font-bold text-slate-800 dark:text-white">{projects.length}</span> projects.
+            Showing <span className="font-bold text-cyan-600 dark:text-cyan-400">{filteredProjects.length}</span> of <span className="font-bold text-slate-800 dark:text-white">{allProjects.length}</span> projects.
           </p>
         )}
 
@@ -327,22 +388,7 @@ function Projects() {
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <ProjectCard
-                      key={project.id}
-                      project={{
-                        title: project.name,
-                        description: project.description || "No description available for this project.",
-                        imageUrl: projectsSettings[project.name]?.icon || `https://placehold.co/600x400/1e293b/ffffff?text=${project.name}`,
-                        projectUrl: project.homepage,
-                        githubUrl: project.html_url,
-                        npmLink: projectsSettings[project.name]?.npmLink,
-                        stars: project.stargazers_count,
-                        topics: project.topics,
-                        createdAt: project.created_at,
-                        updatedAt: project.updated_at,
-                        onGoing: projectsSettings[project.name]?.onGoing || false,
-                      }}
-                    />
+                    <ProjectCard project={project} />
                   </motion.div>
                 ))
               ) : (

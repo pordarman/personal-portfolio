@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchProjectByName, fetchProjectReadme, markdownToHtml } from '../utils/GithubUtils';
+import { otherProjects } from '../data/otherProjectsData';
 import "../assets/github-markdown-styles.css"
 
 // Star Icon SVG'si
@@ -9,7 +10,7 @@ const StarIcon = () => (
 );
 
 function ProjectDetail() {
-  const { projectName } = useParams(); // URL'den proje adını alıyoruz
+  const { projectId } = useParams(); // URL'den proje adını alıyoruz
   const [project, setProject] = useState(null);
   const [markdownHtml, setMarkdownHtml] = useState('');
   const [loading, setLoading] = useState(true);
@@ -20,13 +21,27 @@ function ProjectDetail() {
       try {
         setLoading(true);
         setError(null);
-        const [projectData, readmeData] = await Promise.all([
-          fetchProjectByName(projectName),
-          fetchProjectReadme(projectName)
-        ]);
 
-        setProject(projectData);
-        setMarkdownHtml(await markdownToHtml(readmeData));
+        // 1. Önce yerel projeler arasında ara
+        const localProject = otherProjects.find(p => p.id === projectId);
+
+        if (localProject) {
+          // Eğer yerel proje bulunduysa:
+          setProject(localProject);
+          const htmlContent = await markdownToHtml(localProject.readme);
+          setMarkdownHtml(htmlContent);
+        } else {
+          // Eğer yerel proje bulunamadıysa, GitHub projesi olduğunu varsay
+          const [githubProjectData, readmeMarkdown] = await Promise.all([
+            fetchProjectByName(projectId),
+            fetchProjectReadme(projectId)
+          ]);
+
+          const htmlContent = await markdownToHtml(readmeMarkdown);
+
+          setProject(githubProjectData);
+          setMarkdownHtml(htmlContent);
+        }
       } catch (err) {
         setError('Proje verileri yüklenirken bir hata oluştu.');
         console.error(err);
@@ -35,7 +50,7 @@ function ProjectDetail() {
       }
     };
     loadProjectData();
-  }, [projectName]);
+  }, [projectId]);
 
   if (loading) return <div className="text-center dark:text-white text-xl">Loading Project...</div>;
   if (error) return <div className="text-center text-red-500 text-xl">{error}</div>;
@@ -49,17 +64,21 @@ function ProjectDetail() {
         <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">{project.name}</h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">{project.description}</p>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <div className="flex items-center text-slate-900 dark:text-white">
-            <StarIcon />
-            <span>{project.stargazers_count} stars</span>
-          </div>
+          {project.stargazers_count && (
+            <div className="flex items-center text-slate-900 dark:text-white">
+              <StarIcon />
+              <span>{project.stargazers_count} stars</span>
+            </div>
+          )}
           {project.language && (
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Language: {project.language}</span>
           )}
-          <a href={project.html_url} target="_blank" rel="noopener noreferrer"
-            className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">
-            View on GitHub ↗
-          </a>
+          {project.html_url && (
+            <a href={project.html_url} target="_blank" rel="noopener noreferrer"
+              className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">
+              View on GitHub ↗
+            </a>
+          )}
         </div>
       </div>
 
