@@ -1,4 +1,5 @@
 import OnGoingCard from "./OnGoingCard";
+import { Link } from "react-router-dom";
 
 function FeaturedProjectCard({ project }) {
   const { title, description, imageUrl, projectUrl, startDate, onGoing } = project;
@@ -22,6 +23,8 @@ function FeaturedProjectCard({ project }) {
         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
           {
             projectUrl ? (
+              projectUrl.startsWith("/") ? // Link etiketini kullan
+              <Link to={projectUrl} className="text-blue-500 dark:text-blue-600 underline">{title}</Link> :
               <a href={projectUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-600 underline">{title}</a>
             ) : (
               <span>{title}</span>
