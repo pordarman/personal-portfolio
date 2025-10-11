@@ -72,12 +72,12 @@ const projectsSettings = {
   "sudoku-pdf-generator": {
     icon: sudokuWeb,
     onGoing: true,
-    order: 3,
+    order: 4,
   },
   "personal-portfolio": {
     icon: personalPortfolio,
     onGoing: true,
-    order: 2,
+    order: 3,
   }
 };
 
@@ -162,23 +162,25 @@ function Projects() {
 
         // Sıralama: onGoing -> order -> updatedAt -> createdAt -> name
         const combinedProjects = [...otherProjects, ...githubProjects].sort((a, b) => {
-          // İlk başta ongoing true olacak şekilde yeniden sırala
-          const aGoing = a.onGoing || projectsSettings[a.name]?.onGoing || false;
-          const bGoing = b.onGoing || projectsSettings[b.name]?.onGoing || false;
+          console.log(`${a.name} - ${a.onGoing} - ${a.order} - ${a.updatedAt} - ${a.createdAt}`);
+          console.log(`${b.name} - ${b.onGoing} - ${b.order} - ${b.updatedAt} - ${b.createdAt}`);
+          // İlk olarak order durumuna göre sırala
+          const aOrder = a.order || Infinity;
+          const bOrder = b.order || Infinity;
+          if (aOrder !== bOrder) {
+            return aOrder - bOrder; // Büyükten küçüğe
+          }
+
+          // Eğer order durumu aynıysa, onGoing durumuna göre sırala (true önce gelir)
+          const aGoing = a.onGoing || false;
+          const bGoing = b.onGoing || false;
           if (aGoing !== bGoing) {
             return Number(bGoing) - Number(aGoing); // true önce gelir
           }
 
-          // Eğer ongoing durumu aynıysa, sıralama için diğer kriterleri kullan
-          const aOrder = a.order || projectsSettings[a.name]?.order || 0;
-          const bOrder = b.order || projectsSettings[b.name]?.order || 0;
-          if (aOrder !== bOrder) {
-            return aOrder - bOrder;
-          }
-
-          // Eğer order durumu aynıysa, güncellenme tarihine göre sırala
-          const aUpdatedAt = a.updatedAt || projectsSettings[a.name]?.updatedAt || 0;
-          const bUpdatedAt = b.updatedAt || projectsSettings[b.name]?.updatedAt || 0;
+          // Eğer onGoing durumu aynıysa, güncellenme tarihine göre sırala
+          const aUpdatedAt = a.updatedAt || 0;
+          const bUpdatedAt = b.updatedAt || 0;
           const aUpdatedDate = new Date(aUpdatedAt);
           const bUpdatedDate = new Date(bUpdatedAt);
           if (aUpdatedDate !== bUpdatedDate) {
@@ -186,8 +188,8 @@ function Projects() {
           }
 
           // Eğer güncellenme tarihi de aynıysa, oluşturulma tarihine göre sırala
-          const aCreatedAt = a.createdAt || projectsSettings[a.name]?.createdAt || 0;
-          const bCreatedAt = b.createdAt || projectsSettings[b.name]?.createdAt || 0;
+          const aCreatedAt = a.createdAt || 0;
+          const bCreatedAt = b.createdAt || 0;
           const aCreatedDate = new Date(aCreatedAt);
           const bCreatedDate = new Date(bCreatedAt);
           if (aCreatedDate !== bCreatedDate) {

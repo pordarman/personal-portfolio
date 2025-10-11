@@ -5,6 +5,8 @@ import FeaturedProjectCard from "../components/FeaturedProjectCard";
 import sudokuWebIcon from "../assets/sudoku-web.webp";
 import spiritfallIcon from "../assets/spiritfall_preview.webp";
 import alisaIcon from "../assets/alisa-avatar_400x600.webp";
+import personalPortfolio from "../assets/personal-portfolio.webp";
+import teknofestIcon from "../assets/teknofest_preview.webp";
 
 const skills = [
     { name: "JavaScript", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", clickUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" },
@@ -32,21 +34,39 @@ const myFeaturedProjects = [
     },
     {
         id: 2,
-        title: "Alisa - Discord Bot",
-        description: "A Discord bot built with JavaScript and Node.js that automates tasks and enhances server engagement. Additional features include show server, user informations and many more. You can find the source code on GitHub.",
-        imageUrl: alisaIcon,
-        projectUrl: "/projects/alisa",
-        startDate: "May 2021",
+        title: "TEKNOFEST 2025 - UAV Competition Finalist",
+        description: "Led a team to the finals in the TEKNOFEST 2025 UAV competition, developing an autonomous drone system using Python and ROS for complex flight missions.",
+        imageUrl: teknofestIcon,
+        projectUrl: "/projects/teknofest-2025-uav-competition",
+        startDate: "March 2025",
         onGoing: false
     },
     {
         id: 3,
+        title: "Personal Portfolio Website",
+        description: "My personal portfolio website built with React and Tailwind CSS, showcasing my projects, skills, and experience in a sleek, modern design.",
+        imageUrl: personalPortfolio,
+        projectUrl: "/projects/personal-portfolio",
+        startDate: "July 2025",
+        onGoing: true,
+    },
+    {
+        id: 4,
         title: "Sudoku PDF Generator",
         description: "This React-based web application instantly generates unique Sudoku puzzles and allows users to download and print them in PDF format.",
         imageUrl: sudokuWebIcon,
         projectUrl: "/projects/sudoku-pdf-generator",
         startDate: "August 2025",
         onGoing: true,
+    },
+    {
+        id: 5,
+        title: "Alisa - Discord Bot",
+        description: "A Discord bot built with JavaScript and Node.js that automates tasks and enhances server engagement. Additional features include show server, user informations and many more. You can find the source code on GitHub.",
+        imageUrl: alisaIcon,
+        projectUrl: "/projects/alisa",
+        startDate: "May 2021",
+        onGoing: false
     },
 ];
 

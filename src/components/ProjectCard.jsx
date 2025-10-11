@@ -19,7 +19,7 @@ function ProjectCard({ project }) {
         <a href={imageUrl} target="_blank" rel="noopener noreferrer">
           <img
             className="w-full h-68 object-cover"
-            src={imageUrl}
+            src={imageUrl || "https://placehold.co/600x400/1e2b3c/ffffff?text=No+Image"}
             alt={`${name} projesinin ekran görüntüsü`}
             onError={(e) => {
               e.target.onerror = null;
