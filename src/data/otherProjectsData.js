@@ -19,7 +19,7 @@ export const otherProjects = [
     onGoing: false,
     order: 1, // This will make it appear first
     readme: `
-![Me with the Drone](../assets/teknofest_me_drone.webp)
+![Me with the Drone](/images/teknofest_me_drone.webp)
 
 # TEKNOFEST 2025 - Unmanned Aerial Vehicle (UAV) Competition
 
@@ -42,13 +42,10 @@ The primary objective was to develop a UAV capable of autonomously navigating a 
 ### The Drone & The Team
 *A brief look at our hardware and the dedicated team behind this project.*
 
-![Our Drone](../assets/teknofest_drone.webp)
-![Our Drone](../src/assets/teknofest_drone.webp)
-![Our Drone](../personal-portfolio/src/assets/teknofest_drone.webp)
-![Our Drone](../teknofest_drone.webp)
+![Our Drone](/images/teknofest_drone.webp)
 *A picture of our custom-built quadcopter.*
 
-![Our Team](../assets/teknofest_team.webp)
+![Our Team](/images/teknofest_team.webp)
 *The team during one of our late-night work sessions at the workshop.*
 
 ---
@@ -67,10 +64,10 @@ Beyond gaining expertise in technologies like DroneKit and MAVLink, this experie
 ### A Glimpse into the Code & System
 *Screenshots from our development process.*
 
-![QGroundControl Screenshot](../assets/qgroundcontrol_ss.webp)
+![QGroundControl Screenshot](/images/qgroundcontrol_ss.webp)
 *Pre-flight mission planning and simulation in QGroundControl.*
 
-![Code Screenshot](../assets/code_ss.webp)
+![Code Screenshot](/images/code_ss.webp)
 *A snippet of the Python code handling the autonomous flight logic.*
 
 ## 🏆 Outcome
@@ -117,7 +114,7 @@ Despite all the challenges, we successfully qualified as finalists and secured t
 
   ## 🖼️ Development Screenshots
 
-  ![In-game Screenshot 1](../assets/spiritfall_preview.webp)
+  ![In-game Screenshot 1](/images/spiritfall_preview.webp)
 
   ## 🚧 Development Process & Challenges
 
