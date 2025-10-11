@@ -43,6 +43,9 @@ The primary objective was to develop a UAV capable of autonomously navigating a 
 *A brief look at our hardware and the dedicated team behind this project.*
 
 ![Our Drone](../assets/teknofest_drone.webp)
+![Our Drone](../src/assets/teknofest_drone.webp)
+![Our Drone](../personal-portfolio/src/assets/teknofest_drone.webp)
+![Our Drone](../teknofest_drone.webp)
 *A picture of our custom-built quadcopter.*
 
 ![Our Team](../assets/teknofest_team.webp)
