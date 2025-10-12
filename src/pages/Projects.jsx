@@ -178,7 +178,14 @@ function Projects() {
             return Number(bGoing) - Number(aGoing); // true önce gelir
           }
 
-          // Eğer onGoing durumu aynıysa, güncellenme tarihine göre sırala
+          // Eğer onGoing durumu da aynıysa, stars sayısına göre sırala (çoktan aza)
+          const aStars = a.stars || 0;
+          const bStars = b.stars || 0;
+          if (aStars !== bStars) {
+            return bStars - aStars;
+          }
+
+          // Eğer stars durumu aynıysa, güncellenme tarihine göre sırala
           const aUpdatedAt = a.updatedAt || 0;
           const bUpdatedAt = b.updatedAt || 0;
           const aUpdatedDate = new Date(aUpdatedAt);
