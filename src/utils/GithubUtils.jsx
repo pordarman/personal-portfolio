@@ -67,7 +67,7 @@ export const fetchProjectByName = async (repoName) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching project ${repoName}:`, error);
-    throw error; // Hatanın bileşen tarafından yakalanmasını sağla
+    return null;
   }
 };
 
@@ -103,11 +103,7 @@ export const fetchProjectReadme = async (repoName) => {
     return result;
   } catch (error) {
     console.error(`Error fetching README for ${repoName}:`, error);
-    // Eğer README yoksa 404 hatası döner, bunu kontrol edip boş dönebiliriz.
-    if (error.response && error.response.status === 404) {
-      return "Bu proje için bir README.md dosyası bulunamadı.";
-    }
-    throw error;
+    return null;
   }
 };
 

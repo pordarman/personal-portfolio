@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchProjectByName, fetchProjectReadme, markdownToHtml } from '../utils/GithubUtils';
 import { otherProjects } from '../data/otherProjectsData';
 import "../assets/github-markdown-styles.css"
+import ProjectNotFound from './ProjectNotFound';
 
 // Star Icon SVG'si
 const StarIcon = () => (
@@ -15,12 +16,14 @@ function ProjectDetail() {
   const [markdownHtml, setMarkdownHtml] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [projectNotFound, setProjectNotFound] = useState(false);
 
   useEffect(() => {
     const loadProjectData = async () => {
       try {
         setLoading(true);
         setError(null);
+        setProjectNotFound(false);
 
         // 1. Önce yerel projeler arasında ara
         const localProject = otherProjects.find(p => p.id === projectId);
@@ -37,13 +40,19 @@ function ProjectDetail() {
             fetchProjectReadme(projectId)
           ]);
 
+          if (!githubProjectData || !readmeMarkdown) {
+            setProjectNotFound(true);
+            setLoading(false);
+            return;
+          }
+
           const htmlContent = await markdownToHtml(readmeMarkdown);
 
           setProject(githubProjectData);
           setMarkdownHtml(htmlContent);
         }
       } catch (err) {
-        setError('Proje verileri yüklenirken bir hata oluştu.');
+        setError("Error loading project data.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -54,8 +63,7 @@ function ProjectDetail() {
 
   if (loading) return <div className="text-center dark:text-white text-xl">Loading Project...</div>;
   if (error) return <div className="text-center text-red-500 text-xl">{error}</div>;
-  if (!project) return <div className="text-center dark:text-white text-xl">Project not found.</div>;
-
+  if (projectNotFound) return <ProjectNotFound projectId={projectId} />;
 
   return (
     <div className="container mx-auto px-4 py-8">
