@@ -96,22 +96,22 @@ To fetch data from the GitHub API, you need to create a Personal Access Token (P
 1. Create a `.env` file in the root of the project.  
 2. Add your GitHub PAT to the `.env` file as shown below:  
    ```shell
-   VITE_GITHUB_TOKEN=your_github_personal_access_token  
+   GITHUB_TOKEN=your_github_personal_access_token  
    ```
    You can generate a new token from your GitHub settings: [GitHub Developer Settings](https://github.com/settings/tokens). The token only needs `public_repo` scope.
 3. Add your EmailJS variable to the `.env` file as shown below:
    ```shell
-   VITE_EMAILJS_SERVICE_ID=service_id
-   VITE_EMAILJS_TEMPLATE_ID=template_id
-   VITE_EMAILJS_PUBLIC_KEY=your_public_key
+   EMAILJS_SERVICE_ID=service_id
+   EMAILJS_TEMPLATE_ID=template_id
+   EMAILJS_PUBLIC_KEY=your_public_key
    ```
    ### **EmailJS Integration**
 
    This project uses [EmailJS](https://www.emailjs.com/) to enable contact form submissions directly from the frontend without a backend server. You need to set up your EmailJS account and configure the following environment variables:
 
-   - `VITE_EMAILJS_SERVICE_ID`: Your EmailJS service ID.
-   - `VITE_EMAILJS_TEMPLATE_ID`: The template ID for your email.
-   - `VITE_EMAILJS_PUBLIC_KEY`: Your EmailJS public key.
+   - `EMAILJS_SERVICE_ID`: Your EmailJS service ID.
+   - `EMAILJS_TEMPLATE_ID`: The template ID for your email.
+   - `EMAILJS_PUBLIC_KEY`: Your EmailJS public key.
 
    Refer to the [EmailJS documentation](https://www.emailjs.com/docs/) for detailed setup instructions.
 

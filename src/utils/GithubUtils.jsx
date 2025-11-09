@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Base64 } from 'js-base64';
 
-const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+const TOKEN = import.meta.env.GITHUB_TOKEN;
 const GITHUB_USERNAME = "pordarman";
 const GITHUB_API_URL = "https://api.github.com";
 
