@@ -1,130 +1,82 @@
 import axios from "axios";
-import { Base64 } from 'js-base64';
-
-const TOKEN = import.meta.env.GITHUB_TOKEN;
-const GITHUB_USERNAME = "pordarman";
-const GITHUB_API_URL = "https://api.github.com";
-
-const EXPIRES_IN = 30 * 60 * 1000; // 30 dakika
+// Artık 'js-base64' veya TOKEN'a burada (istemcide) ihtiyacımız yok.
 
 /**
- * GitHub projelerini çeker
- * @param {"updated" | "created" | "pushed" | "full_name"} sort Sıralama kriteri
- * @param {"asc" | "desc"} order Sıralama yönü
- * @returns {Promise<Array>} Projelerin listesi
+ * GitHub projelerini kendi güvenli API'mızdan çeker.
  */
-export const fetchProjectsGithub = async (sort = "updated", order = "desc") => {
+export const fetchProjectsGithub = async () => {
   try {
-    const cacheKey = `github_projects_${sort}_${order}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) {
-      const { data, expires } = JSON.parse(cached);
-      if (Date.now() < expires) {
-        return data;
-      }
-      sessionStorage.removeItem(cacheKey);
-    }
-
-    const response = await axios.get(`${GITHUB_API_URL}/users/${GITHUB_USERNAME}/repos?sort=${sort}&direction=${order}`, {
-      headers: {
-        Authorization: `token ${TOKEN}`
-      }
-    });
-    const result = response.data.filter(repo => repo.name !== GITHUB_USERNAME);
-
-    // Tarayıcının önbelleğine yükle ve sınır koy
-    sessionStorage.setItem(cacheKey, JSON.stringify({ data: result, expires: Date.now() + EXPIRES_IN }));
-    return result;
+    // SessionStorage'a gerek yok, Vercel sunucuda cache'liyor.
+    const response = await axios.get("/api/projects");
+    console.log("API /api/projects response:", response);
+    return response.data;
   } catch (error) {
     console.error("Error fetching projects:", error);
-    return [];
+    throw new Error(error.response?.data?.message || "Error fetching projects.");
   }
 };
 
 /**
- * Belirtilen ada göre tek bir GitHub projesinin detaylarını çeker
+ * Tek bir projenin detayını ve render edilmiş README HTML'ini çeker.
  * @param {string} repoName Projenin adı
- * @returns {Promise<Object>} Proje detayları
+ * @returns {Promise<Object>} { project, readmeHtml }
  */
+export const fetchProjectDetails = async (repoName) => {
+  try {
+    const response = await axios.get(`/api/projectDetail?repoName=${repoName}`);
+    return response.data; // { project, readmeHtml }
+  } catch (error) {
+    console.error(`Error fetching project ${repoName}:`, error);
+    if (error.response && error.response.status === 404) {
+      return null; // Proje bulunamadı
+    }
+    throw new Error(error.response?.data?.message || `Error fetching ${repoName}.`);
+  }
+};
+
+/**
+ * Markdown metnini HTML'e çevirmek için kendi güvenli API'mızı kullanır.
+ * (Genellikle yerel projelerin README'leri için kullanılır)
+ * @param {string} markdown Dönüştürülecek metin
+ * @returns {Promise<string>} HTML içeriği
+ */
+export const markdownToHtml = async (markdown) => {
+  try {
+    const response = await axios.post(`/api/markdown`, {
+      markdown: markdown, // 'markdown' key'i ile gönder
+    });
+    return response.data; // API doğrudan HTML string'i döner
+  } catch (error) {
+    console.error("Error converting markdown:", error);
+    throw new Error(error.response?.data?.message || "Error converting markdown.");
+  }
+}
+
+// ----- ESKİ FONKSİYONLAR (Uyumluluk için) -----
+// ProjectDetail.jsx'in Promise.all yapısını bozmamak için bu eski fonksiyonları
+// yeni ve güvenli `fetchProjectDetails`'i kullanacak şekilde güncelliyoruz.
+
 export const fetchProjectByName = async (repoName) => {
   try {
-    // Önbellek kontrolü
-    const cacheKey = `github_project_${repoName}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) {
-      const { data, expires } = JSON.parse(cached);
-      if (Date.now() < expires) {
-        return data;
-      }
-      sessionStorage.removeItem(cacheKey);
-    }
-
-    const response = await axios.get(`${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}`, {
-      headers: { Authorization: `token ${TOKEN}` }
-    });
-    // Tarayıcının önbelleğine yükle ve sınır koy
-    sessionStorage.setItem(cacheKey, JSON.stringify({ data: response.data, expires: Date.now() + EXPIRES_IN }));
-    return response.data;
+    const details = await fetchProjectDetails(repoName);
+    return details ? details.project : null;
   } catch (error) {
     console.error(`Error fetching project ${repoName}:`, error);
     return null;
   }
 };
 
-/**
- * Belirtilen projenin README.md dosyasının içeriğini çeker
- * @param {string} repoName Projenin adı
- * @returns {Promise<string>} README içeriği (UTF-8 formatında)
- */
 export const fetchProjectReadme = async (repoName) => {
-  try {
-    // Önbellek kontrolü
-    const cacheKey = `github_readme_${repoName}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) {
-      const { data, expires } = JSON.parse(cached);
-      if (Date.now() < expires) {
-        return data;
-      }
-      sessionStorage.removeItem(cacheKey);
-    }
+  // Bu fonksiyon aslında artık HTML dönmüyor,
+  // ama ProjectDetail.jsx'deki Promise.all'un çalışması için
+  // bir değer döndürmesi gerekiyor. Asıl veriyi `fetchProjectByName`
+  // (yukarıdaki) üzerinden alacağız, bu yüzden `projectDetail`'i
+  // tekrar çağırmamıza gerek yok.
+  // 
+  // Düzeltme: ProjectDetail.jsx'i de değiştirmek en temizi.
+  // Orijinal dosyanın `Promise.all` kullandığını görüyorum.
+  // O dosyayı da güncelleyelim.
 
-    const response = await axios.get(`${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}/readme`, {
-      headers: {
-        Authorization: `token ${TOKEN}`,
-        // GitHub'ın içeriği direkt HTML veya ham metin olarak göndermesini isteyebiliriz,
-        // ama varsayılan olarak JSON içinde base64 formatında gönderir.
-      }
-    });
-    const result = Base64.decode(response.data.content);
-
-    // Tarayıcının önbelleğine yükle ve sınır koy
-    sessionStorage.setItem(cacheKey, JSON.stringify({ data: result, expires: Date.now() + EXPIRES_IN }));
-    return result;
-  } catch (error) {
-    console.error(`Error fetching README for ${repoName}:`, error);
-    return null;
-  }
+  // Bu fonksiyonu SİLİYORUZ, `ProjectDetail.jsx`'i güncelleyeceğiz.
+  return "DEPRECATED";
 };
-
-export const markdownToHtml = async (markdown) => {
-  // Önbellek kontrolü
-  const cacheKey = `github_markdown_${markdown}`;
-  const cached = sessionStorage.getItem(cacheKey);
-  if (cached) {
-    return JSON.parse(cached);
-  }
-
-  // Markdown'ı HTML'e dönüştürmek için github api'sını kullanacağız
-  const response = await axios.post(`${GITHUB_API_URL}/markdown`, {
-    text: markdown,
-    mode: "gfm"
-  }, {
-    headers: { Authorization: `token ${TOKEN}` }
-  });
-  const { data } = response;
-  
-  // Önbelleğe al
-  sessionStorage.setItem(cacheKey, JSON.stringify(data));
-  return data;
-}

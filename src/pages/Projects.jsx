@@ -141,6 +141,7 @@ function Projects() {
       try {
         // Hem GitHub'dan hem de yerel dosyadan verileri aynı anda çek
         const githubRepos = await fetchProjectsGithub();
+        console.log("Fetched GitHub Repos:", githubRepos);
 
         // GitHub verilerini standart bir formata dönüştür
         const githubProjects = githubRepos.map(repo => ({

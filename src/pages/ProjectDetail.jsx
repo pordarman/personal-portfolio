@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchProjectByName, fetchProjectReadme, markdownToHtml } from '../utils/GithubUtils';
+// Artık sadece bu ikisine ihtiyacımız var:
+import { fetchProjectDetails, markdownToHtml } from '../utils/GithubUtils';
 import { otherProjects } from '../data/otherProjectsData';
 import "../assets/github-markdown-styles.css"
 import ProjectNotFound from './ProjectNotFound';
@@ -11,7 +12,7 @@ const StarIcon = () => (
 );
 
 function ProjectDetail() {
-  const { projectId } = useParams(); // URL'den proje adını alıyoruz
+  const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [markdownHtml, setMarkdownHtml] = useState('');
   const [loading, setLoading] = useState(true);
@@ -29,31 +30,29 @@ function ProjectDetail() {
         const localProject = otherProjects.find(p => p.id === projectId);
 
         if (localProject) {
-          // Eğer yerel proje bulunduysa:
+          // YEREL PROJE BULUNDU:
           setProject(localProject);
+          // Güvenli `markdownToHtml` fonksiyonumuzu (api/markdown) kullanarak çevir
           const htmlContent = await markdownToHtml(localProject.readme);
           setMarkdownHtml(htmlContent);
         } else {
-          // Eğer yerel proje bulunamadıysa, GitHub projesi olduğunu varsay
-          const [githubProjectData, readmeMarkdown] = await Promise.all([
-            fetchProjectByName(projectId),
-            fetchProjectReadme(projectId)
-          ]);
+          // YERELDE YOK, GITHUB'DA ARA:
+          // Yeni ve tekil `fetchProjectDetails` fonksiyonumuzu kullan
+          const githubData = await fetchProjectDetails(projectId);
 
-          if (!githubProjectData || !readmeMarkdown) {
+          if (!githubData) {
             setProjectNotFound(true);
-            setLoading(false);
-            return;
+          } else {
+            setProject(githubData.project);
+            setMarkdownHtml(githubData.readmeHtml);
           }
-
-          const htmlContent = await markdownToHtml(readmeMarkdown);
-
-          setProject(githubProjectData);
-          setMarkdownHtml(htmlContent);
         }
       } catch (err) {
         setError("Error loading project data.");
         console.error(err);
+        if (err.response && err.response.status === 404) {
+          setProjectNotFound(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -67,15 +66,15 @@ function ProjectDetail() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Proje Başlığı ve Bilgileri */}
       <div className="mb-8 p-6 bg-slate-100 dark:bg-slate-800 rounded-lg">
         <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">{project.name}</h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">{project.description}</p>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          {project.stargazers_count && (
+          {/* `stargazers_count` veya local `stars` kontrolü */}
+          {(project.stargazers_count !== undefined || project.stars !== undefined) && (
             <div className="flex items-center text-slate-900 dark:text-white">
               <StarIcon />
-              <span>{project.stargazers_count} stars</span>
+              <span>{project.stargazers_count || project.stars} stars</span>
             </div>
           )}
           {project.language && (
@@ -90,14 +89,11 @@ function ProjectDetail() {
         </div>
       </div>
 
-      {/* README İçeriği - Gelişmiş */}
       <div className="markdown-body bg-white dark:bg-[#0d1117] p-6 sm:p-8 rounded-lg">
-        <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-          <div
-            className='markdown-body'
-            dangerouslySetInnerHTML={{ __html: markdownHtml }}
-          />
-        </p>
+        <div
+          className='markdown-body'
+          dangerouslySetInnerHTML={{ __html: markdownHtml }}
+        />
       </div>
     </div>
   );
