@@ -13,13 +13,8 @@ const skills = [
     { name: "React", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg", clickUrl: "https://reactjs.org/" },
     { name: "Node.js", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg", clickUrl: "https://nodejs.org/" },
     { name: "C#", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg", clickUrl: "https://docs.microsoft.com/en-us/dotnet/csharp/" },
-    { name: "HTML5", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg", clickUrl: "https://developer.mozilla.org/en-US/docs/Web/HTML" },
-    { name: "CSS3", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg", clickUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS" },
-    { name: "Tailwind CSS", imageUrl: "https://raw.githubusercontent.com/devicons/devicon/54cfe13ac10eaa1ef817a343ab0a9437eb3c2e08/icons/tailwindcss/tailwindcss-original.svg", clickUrl: "https://tailwindcss.com/" },
-    { name: "Git", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg", clickUrl: "https://git-scm.com/" },
     { name: "Python", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg", clickUrl: "https://www.python.org/" },
     { name: "Java", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", clickUrl: "https://www.java.com/" },
-    { name: "MySQL", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg", clickUrl: "https://www.mysql.com/" },
 ];
 
 const myFeaturedProjects = [
