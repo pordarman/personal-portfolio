@@ -1,10 +1,9 @@
 import { Link, NavLink } from "react-router-dom";
 import React, { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
-// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 
-// Hamburger ve Kapatma ikonları için SVG bileşenleri
+// SVG Icons
 const MenuIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -18,15 +17,12 @@ const CloseIcon = () => (
 );
 
 function Header() {
-  // 1. Mobil menünün açık/kapalı durumunu tutmak için state ekledik
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Menü linkine tıklandığında menüyü kapatan fonksiyon
   const handleLinkClick = () => {
     setIsMenuOpen(false);
   };
 
-  // Animasyon varyantları
   const menuVariants = {
     hidden: { opacity: 0, x: "100%" },
     visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 120, damping: 20 } },

@@ -1,8 +1,9 @@
-// GitHub'da olmayan diğer projelerimizi burada tutacağız.
-// Her projenin kendine özgü bir 'id'si olmalı.
 import spiritfallIcon from '../assets/spiritfall_preview.webp';
 import teknofestIcon from '../assets/teknofest_preview.webp';
 
+// These projects are detailed in their own pages, so we provide a brief overview here.
+// You can expand this list with more projects as needed.
+// And also these projects are not in github because we have to write all the id, name, readme etc. manually.
 export const otherProjects = [
   {
     id: 'teknofest-2025-uav-competition',
@@ -136,5 +137,5 @@ Despite all the challenges, we successfully qualified as finalists and secured t
   Spiritfall is currently in active development. Planned features include new enemy types, additional purification abilities, boss battles, and expanded story content. Feedback and collaboration are welcome!
     `
   }
-  // Gelecekte buraya başka projeler ekleyebilirsin...
+  // You can add more local projects here
 ];

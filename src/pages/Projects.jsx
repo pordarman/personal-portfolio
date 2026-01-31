@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 import { fetchProjectsGithub } from "../utils/GithubUtils";
 import { otherProjects } from "../data/otherProjectsData";
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
 // Images
@@ -18,7 +17,7 @@ import sudokuWeb from "../assets/sudoku-web_400x600.webp";
 import personalPortfolio from "../assets/personal-portfolio.webp";
 
 const projectsSettings = {
-  // Discord Botları
+  // Discord Bots
   "alisa": {
     icon: alisaAvatar,
     onGoing: false,
@@ -36,7 +35,7 @@ const projectsSettings = {
     onGoing: false,
   },
 
-  // NPM modülleri
+  // NPM modules
   "alisa.db": {
     icon: modulesImg,
     onGoing: false,
@@ -81,6 +80,7 @@ const projectsSettings = {
   }
 };
 
+// Icons
 const SearchIcon = () => (
   <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -99,14 +99,14 @@ const StyledCheckbox = ({ label, name, checked, onChange }) => (
       name={name}
       checked={checked}
       onChange={onChange}
-      className="absolute opacity-0 w-0 h-0" // Varsayılan checkbox'ı gizle
+      className="absolute opacity-0 w-0 h-0" 
     />
     <div className={`w-5 h-5 border-2 flex items-center justify-center rounded-md transition-all duration-200 
       ${checked
         ? 'bg-cyan-600 border-cyan-600'
         : 'bg-transparent border-slate-300 dark:border-gray-500 group-hover:border-cyan-500'}`
     }>
-      {/* İşaretliyken görünecek tik ikonu */}
+
       {checked && (
         <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -122,7 +122,6 @@ function Projects() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filtreleme için state'ler
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -139,9 +138,8 @@ function Projects() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        // Hem GitHub'dan hem de yerel dosyadan verileri aynı anda çek
+        // Fetch github projects
         const githubRepos = await fetchProjectsGithub();
-        console.log("Fetched GitHub Repos:", githubRepos);
 
         // GitHub verilerini standart bir formata dönüştür
         const githubProjects = githubRepos.map(repo => ({
@@ -161,32 +159,26 @@ function Projects() {
           onGoing: projectsSettings[repo.name]?.onGoing || false,
         }));
 
-        // Sıralama: onGoing -> order -> updatedAt -> createdAt -> name
+        // Sort: onGoing -> order -> updatedAt -> createdAt -> name
         const combinedProjects = [...otherProjects, ...githubProjects].sort((a, b) => {
-          console.log(`${a.name} - ${a.onGoing} - ${a.order} - ${a.updatedAt} - ${a.createdAt}`);
-          console.log(`${b.name} - ${b.onGoing} - ${b.order} - ${b.updatedAt} - ${b.createdAt}`);
-          // İlk olarak order durumuna göre sırala
           const aOrder = a.order || Infinity;
           const bOrder = b.order || Infinity;
           if (aOrder !== bOrder) {
-            return aOrder - bOrder; // Büyükten küçüğe
+            return aOrder - bOrder; 
           }
 
-          // Eğer order durumu aynıysa, onGoing durumuna göre sırala (true önce gelir)
           const aGoing = a.onGoing || false;
           const bGoing = b.onGoing || false;
           if (aGoing !== bGoing) {
-            return Number(bGoing) - Number(aGoing); // true önce gelir
+            return Number(bGoing) - Number(aGoing);
           }
 
-          // Eğer onGoing durumu da aynıysa, stars sayısına göre sırala (çoktan aza)
           const aStars = a.stars || 0;
           const bStars = b.stars || 0;
           if (aStars !== bStars) {
             return bStars - aStars;
           }
 
-          // Eğer stars durumu aynıysa, güncellenme tarihine göre sırala
           const aUpdatedAt = a.updatedAt || 0;
           const bUpdatedAt = b.updatedAt || 0;
           const aUpdatedDate = new Date(aUpdatedAt);
@@ -195,7 +187,6 @@ function Projects() {
             return bUpdatedDate - aUpdatedDate;
           }
 
-          // Eğer güncellenme tarihi de aynıysa, oluşturulma tarihine göre sırala
           const aCreatedAt = a.createdAt || 0;
           const bCreatedAt = b.createdAt || 0;
           const aCreatedDate = new Date(aCreatedAt);
@@ -204,7 +195,7 @@ function Projects() {
             return bCreatedDate - aCreatedDate;
           }
 
-          // Eğer oluşturulma tarihi de aynıysa, isme göre sırala
+          // If all else equal, sort alphabetically
           return a.name.localeCompare(b.name);
         });
 
@@ -222,7 +213,6 @@ function Projects() {
     fetchProjects();
   }, []);
 
-  // useMemo kullanarak, sadece filtreler değiştiğinde yeniden hesaplama yapılmasını sağlıyoruz.
   useEffect(() => {
     const words = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
     const resultProjects = [];
@@ -237,24 +227,25 @@ function Projects() {
 
     function setDateToEnd(dateString) {
       const date = new Date(dateString);
-      date.setHours(23, 59, 59, 999); // Günün tamamını alması için
+      date.setHours(23, 59, 59, 999); // To include the entire end date
       return date;
     }
 
     for (const project of allProjects) {
       if (
-        // 1. Metin bazlı arama filtresi
+        // 1. Word filter
         (words.length > 0 && !words.every(word => checkWord(project, word))) ||
 
-        // 2. Oluşturulma tarihi filtresi
+        // 2. Date filter
         (dateFilters.created.start && new Date(project.createdAt) < new Date(dateFilters.created.start)) ||
         (dateFilters.created.end && new Date(project.createdAt) > setDateToEnd(dateFilters.created.end)) ||
 
-        // 3. Güncellenme tarihi filtresi
+        // 3. Updated date filter
         (dateFilters.updated.start && new Date(project.updatedAt) < new Date(dateFilters.updated.start)) ||
         (dateFilters.updated.end && new Date(project.updatedAt) > setDateToEnd(dateFilters.updated.end))
       ) {
-        continue; // Eğer proje sağlanan filtreleri geçmiyorsa atla
+
+        continue; // If any filter fails, skip this project
       }
 
       resultProjects.push(project);
@@ -331,7 +322,7 @@ function Projects() {
                 className="overflow-hidden mt-4 bg-slate-100 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Checkbox'lar */}
+                  {/* Checkboxs */}
                   <div>
                     <h4 className="font-semibold mb-2 text-slate-800 dark:text-white">Search In:</h4>
                     <div className="flex flex-col gap-2">
@@ -347,7 +338,7 @@ function Projects() {
                     </div>
                   </div>
 
-                  {/* Tarih Filtreleri */}
+                  {/* Date Filters */}
                   <div>
                     <h4 className="font-semibold mb-3 text-slate-800 dark:text-white">Date Filters:</h4>
                     <div className="space-y-4">
@@ -383,7 +374,7 @@ function Projects() {
         )}
 
         <motion.div
-          layout // Bu prop, grid içindeki elemanların pozisyon değişikliklerini canlandırır
+          layout 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence>
@@ -391,7 +382,7 @@ function Projects() {
               filteredProjects.length != 0 ? (
                 filteredProjects.map(project => (
                   <motion.div
-                    layout // Bu prop, kartın kendi pozisyon değişikliğini canlandırır
+                    layout
                     key={project.id}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}

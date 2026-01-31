@@ -3,13 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 
 function NotFound() {
   const location = useLocation();
-  const path = location.pathname; // Kullanıcının girdiği geçersiz yolu alıyoruz
+  const path = location.pathname; // The path that was not found
 
   return (
     <div className="flex items-center justify-center h-full dark:text-white font-mono p-4">
       <div className="bg-slate-800 border border-red-500/30 rounded-lg shadow-xl w-full max-w-3xl p-6">
         
-        {/* Hata Başlığı */}
+        {/* Error Title */}
         <div className="flex items-center mb-4">
           <span className="w-4 h-4 bg-red-500 rounded-full mr-3 animate-pulse"></span>
           <h1 className="text-xl font-bold text-red-400">
@@ -17,13 +17,13 @@ function NotFound() {
           </h1>
         </div>
 
-        {/* Hata Mesajı */}
+        {/* Error Message */}
         <p className="text-cyan-300 mb-6">
           <span className="text-gray-400">Error Code:</span> 404 <br />
           <span className="text-gray-400">Message:</span> The component for the route "<span className="text-yellow-400">{path}</span>" could not be resolved.
         </p>
 
-        {/* Stack Trace (Yığın İzleme) */}
+        {/* Stack Trace - Simulated for the missing route */}
         <div className="text-sm border-t border-gray-700 pt-4">
           <p className="mb-1 text-gray-400">Stack Trace:</p>
           <div className="pl-4 font-mono bg-black/60 rounded p-3 text-xs overflow-x-auto">
@@ -75,7 +75,7 @@ function NotFound() {
           </div>
         </div>
 
-        {/* Çözüm Önerisi ve Buton */}
+        {/* Resolution Suggestion and Button */}
         <div className="mt-8 text-center">
           <p className="text-gray-300 mb-4">Oh, you seem lost. Let me help you find your way back.</p>
           <Link 

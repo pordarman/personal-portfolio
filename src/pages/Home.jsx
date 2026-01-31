@@ -17,6 +17,7 @@ const skills = [
     { name: "Java", imageUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", clickUrl: "https://www.java.com/" },
 ];
 
+// Featured projects data
 const myFeaturedProjects = [
     {
         id: 1,

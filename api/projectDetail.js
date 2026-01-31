@@ -13,10 +13,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Vercel'in sunucu tarafı önbelleğini 30dk olarak ayarla
+    // Set Vercel's server-side cache for 30 minutes
     res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
 
-    // İki API isteğini aynı anda yap (Proje detayı ve README)
     const [projectResponse, readmeResponse] = await Promise.all([
       axios.get(`${GITHUB_API_URL}/repos/${GITHUB_USERNAME}/${repoName}`, {
         headers: { Authorization: `token ${TOKEN}` }
@@ -29,7 +28,6 @@ export default async function handler(req, res) {
     const projectData = projectResponse.data;
     const readmeMarkdown = Base64.decode(readmeResponse.data.content);
 
-    // Şimdi de README markdown'ı HTML'e çevirelim
     const markdownResponse = await axios.post(`${GITHUB_API_URL}/markdown`, {
       text: readmeMarkdown,
       mode: "gfm"
@@ -39,12 +37,12 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       project: projectData,
-      readmeHtml: markdownResponse.data, // Bu zaten HTML
+      readmeHtml: markdownResponse.data,
     });
 
   } catch (error) {
     console.error(`Error fetching details for ${repoName}:`, error.message);
-    // Hata durumunda (örn: repo bulunamadı) 404 veya 500 dön
+
     res.status(error.response?.status || 500).json({ 
       message: `Error fetching details for ${repoName}.`,
       error: error.message 

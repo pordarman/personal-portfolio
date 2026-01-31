@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
 function BackToTopButton() {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Sayfanın kaydırma konumunu dinleyen fonksiyon
   const toggleVisibility = () => {
     if (window.scrollY > 300) {
       setIsVisible(true);
@@ -14,19 +12,16 @@ function BackToTopButton() {
     }
   };
 
-  // Sayfayı yumuşak bir şekilde en üste kaydıran fonksiyon
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth" // Yumuşak kaydırma efekti için
+      behavior: "smooth" 
     });
   };
 
   useEffect(() => {
-    // Bileşen yüklendiğinde "scroll" event listener"ı ekle
     window.addEventListener("scroll", toggleVisibility);
 
-    // Bileşen DOM"dan kaldırıldığında event listener"ı temizle (performans için önemli!)
     return () => {
       window.removeEventListener("scroll", toggleVisibility);
     };
@@ -44,7 +39,7 @@ function BackToTopButton() {
           transition={{ duration: 0.2 }}
           aria-label="Back to top"
         >
-          {/* Yukarı Ok İkonu (SVG) */}
+          {/* Up Arrow Icon */}
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
           </svg>

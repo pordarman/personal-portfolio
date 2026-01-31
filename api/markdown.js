@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const GITHUB_API_URL = "https://api.github.com";
-const TOKEN = process.env.GITHUB_TOKEN; // GitHub'ın markdown API'si de token ister
+const TOKEN = process.env.GITHUB_TOKEN;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     );
 
     res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
-    res.status(200).json(response.data); // API doğrudan HTML string'i döner
+    res.status(200).json(response.data);
 
   } catch (error) {
     console.error("Error converting markdown:", error.message);

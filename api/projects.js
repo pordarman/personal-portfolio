@@ -2,12 +2,11 @@ import axios from 'axios';
 
 const GITHUB_USERNAME = "pordarman";
 const GITHUB_API_URL = "https://api.github.com";
-// Token'ı Vercel'deki sunucu değişkeninden (process.env) güvenle al
 const TOKEN = process.env.GITHUB_TOKEN;
 
 export default async function handler(req, res) {
   try {
-    // Vercel'in sunucu tarafı önbelleğini 30dk olarak ayarla
+    // Set Vercel's server-side cache for 30 minutes
     res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
 
     const response = await axios.get(
