@@ -13,7 +13,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Set Vercel's server-side cache for 30 minutes
     res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
 
     const [projectResponse, readmeResponse] = await Promise.all([

@@ -1,107 +1,56 @@
-import { Link, NavLink } from "react-router-dom";
-import React, { useState } from "react";
-import ThemeToggle from "./ThemeToggle";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { ThemeContext } from '../context/ThemeContext';
+import { Sun, Moon } from 'lucide-react';
 
-// SVG Icons
-const MenuIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-  </svg>
-);
+const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
-const CloseIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-  </svg>
-);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
 
-function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleLinkClick = () => {
-    setIsMenuOpen(false);
-  };
-
-  const menuVariants = {
-    hidden: { opacity: 0, x: "100%" },
-    visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 120, damping: 20 } },
-    exit: { opacity: 0, x: "100%", transition: { duration: 0.2 } }
-  };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <>
-      <header className="bg-white dark:bg-slate-800 shadow-md sticky top-0 z-50 transition-colors duration-300">
-        <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="text-slate-900 dark:text-white text-2xl font-bold">
-            Ali İhsan Çelik
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled
+          ? 'bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800'
+          : 'bg-slate-50 dark:bg-slate-900 border-b border-transparent'
+      }`}
+    >
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <Link to="/" className="text-xl font-bold text-slate-900 dark:text-white">
+          Ali İhsan Çelik
+        </Link>
+        
+        <nav className="flex items-center gap-6">
+          <Link to="/" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">
+            Home
           </Link>
-          <div className="flex items-center space-x-4 md:space-x-6">
-            <ul className="hidden sm:flex space-x-4 md:space-x-6">
-              <li>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) => isActive ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors"}
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/about"
-                  className={({ isActive }) => isActive ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors"}
-                >
-                  About
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/projects"
-                  className={({ isActive }) => isActive ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors"}
-                >
-                  Projects
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/contact"
-                  className={({ isActive }) => isActive ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors"}
-                >
-                  Contact
-                </NavLink>
-              </li>
-            </ul>
-            <ThemeToggle />
-
-            <div className="sm:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-900 dark:text-white z-50">
-                {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-              </button>
-            </div>
-          </div>
-        </nav>
-      </header>
-
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            variants={menuVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed inset-0 bg-slate-100 dark:bg-slate-900 z-40 flex flex-col items-center justify-center"
+          <Link to="/projects" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">
+            Projects
+          </Link>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+            aria-label="Toggle Theme"
           >
-            <ul className="flex flex-col items-center space-y-8">
-              <li><NavLink to="/" onClick={handleLinkClick} className="text-3xl font-semibold text-slate-800 dark:text-white">Home</NavLink></li>
-              <li><NavLink to="/about" onClick={handleLinkClick} className="text-3xl font-semibold text-slate-800 dark:text-white">About</NavLink></li>
-              <li><NavLink to="/projects" onClick={handleLinkClick} className="text-3xl font-semibold text-slate-800 dark:text-white">Projects</NavLink></li>
-              <li><NavLink to="/contact" onClick={handleLinkClick} className="text-3xl font-semibold text-slate-800 dark:text-white">Contact</NavLink></li>
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
+        </nav>
+      </div>
+    </header>
   );
-}
+};
 
 export default Header;
