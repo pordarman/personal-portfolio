@@ -1,21 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { fetchProjectsGithub } from "../utils/GithubUtils";
-import { otherProjects } from "../data/otherProjectsData";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useMemo } from 'react';
+import Radar from '../components/Radar';
+import BorderGlow from '../components/BorderGlow';
+import { ExternalLink, Star, Code2, Search, Calendar, CheckCircle2 } from 'lucide-react';
+import axios from 'axios';
 
-import alisaAvatar from "../assets/alisa-avatar_400x600.webp"
-import ultimeTicketBot from "../assets/ultimate-ticket-bot.webp";
-import ultimateStatBot from "../assets/ultimate-stat-bot.webp";
-import modulesImg from "../assets/modules_400x600.webp";
-import dcjsUtil from "../assets/dcjs-util_400x600.webp";
-import sudokuWeb from "../assets/sudoku-web_400x600.webp";
-import personalPortfolio from "../assets/personal-portfolio.webp";
+import teknofestIcon from '../assets/teknofest_preview.webp';
+import spiritfallIcon from '../assets/spiritfall_preview.webp';
+import alisaAvatar from '../assets/alisa_avatar.webp';
+import pixifyAvatar from '../assets/pixify_avatar.webp';
+import ultimeTicketBot from '../assets/ultimate-ticket-bot.webp';
+import ultimateStatBot from '../assets/ultimate-stat-bot.webp';
+import dcjsUtil from '../assets/dcjs-util.webp';
+import modulesImg from '../assets/modules.webp';
+import sudokuWeb from '../assets/sudoku-web_avatar.webp';
+import personalPortfolio from '../assets/personal-portfolio.webp';
 
+const Github = () => (
+  <svg height="32" viewBox="0 0 16 16" width="32" fill="currentColor">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+  </svg>
+);
 const projectsSettings = {
   "alisa": {
     icon: alisaAvatar,
     onGoing: false,
+  },
+  "Pixify": {
+    icon: pixifyAvatar,
+    onGoing: false
   },
   "ultimate-ticket-bot": {
     icon: ultimeTicketBot,
@@ -61,16 +73,21 @@ const projectsSettings = {
   },
   "sudoku-pdf-generator": {
     icon: sudokuWeb,
+    projectUrl: "https://pordarman.github.io/sudoku-pdf-generator/",
     onGoing: true,
     order: 4,
   },
   "personal-portfolio": {
     icon: personalPortfolio,
+    projectUrl: "https://alicelik.dev",
     onGoing: true,
     order: 3,
   },
   "utaa-web": {
-    skip: true
+    icon: "https://odeme.thk.edu.tr/images/thk_logo.png",
+    projectUrl: "https://thkuogrenci.com/",
+    onGoing: true,
+    order: 5,
   },
   "school-lab": {
     skip: true
@@ -79,396 +96,296 @@ const projectsSettings = {
     skip: true
   }
 };
+const localProjects = [
+  {
+    id: 'teknofest-2025-uav-competition',
+    name: 'TEKNOFEST 2025 - UAV Competition Finalist',
+    description: 'Led the software development for a high school team in an Unmanned Aerial Vehicle (UAV) competition, reaching the finals. We developed an autonomous drone capable of complex tasks like image recognition, payload delivery, and route tracking, finishing 16th out of 30 finalist teams.',
+    imageUrl: teknofestIcon,
+    topics: ['Python', 'DroneKit', 'MAVLink', 'Pixhawk', 'Raspberry Pi', 'OpenCV', 'YOLO'],
+    language: 'Python',
+    projectUrl: null,
+    html_url: null,
+    stargazers_count: null,
+    forks_count: null,
+    source: 'local',
+    createdAt: '2025-07-01',
+    updatedAt: '2025-08-25',
+    onGoing: false,
+    order: 1,
+    isLocal: true,
+  },
+  {
+    id: 'spiritfall-2d-pixel-game',
+    name: 'Spiritfall - 2D Pixel Game',
+    description: 'Face a corrupted wilderness in this top-down action roguelite. A vile spirit has twisted animals into monsters, and you must survive their hordes. Your goal: purify, don\'t kill.',
+    imageUrl: spiritfallIcon,
+    topics: ['C#', 'Unity', 'Game Development', 'Pixel Art'],
+    language: 'C#',
+    projectUrl: null,
+    html_url: null,
+    stargazers_count: null,
+    forks_count: null,
+    source: 'local',
+    createdAt: '2025-06-28',
+    updatedAt: '2025-08-14',
+    onGoing: true,
+    order: 2,
+    isLocal: true,
+  }
+];
 
-const SearchIcon = () => (
-  <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-  </svg>
-);
-
-const FilterIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
-  </svg>
-);
-
-const StyledCheckbox = ({ label, name, checked, onChange }) => (
-  <label className="flex items-center gap-3 cursor-pointer group">
-    <input
-      type="checkbox"
-      name={name}
-      checked={checked}
-      onChange={onChange}
-      className="absolute opacity-0 w-0 h-0" 
-    />
-    <div className={`w-5 h-5 border-2 flex items-center justify-center rounded-md transition-all duration-200 
-      ${checked
-        ? 'bg-cyan-600 border-cyan-600'
-        : 'bg-transparent border-slate-300 dark:border-slate-500 group-hover:border-cyan-500'}`
-    }>
-      {checked && (
-        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-      )}
-    </div>
-    <span className="capitalize text-slate-700 dark:text-slate-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors duration-200">{label}</span>
-  </label>
-);
-
-function Projects() {
-  const [allProjects, setAllProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filteredProjects, setFilteredProjects] = useState([]);
+export default function Projects() {
+  const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  
-  const [searchIn, setSearchIn] = useState({
-    name: true,
-    description: true,
-    tags: true,
-  });
-  
-  const [dateFilters, setDateFilters] = useState({
-    created: { start: "", end: "" },
-    updated: { start: "", end: "" },
-  });
 
   useEffect(() => {
-    async function fetchProjects() {
+    const fetchAllProjects = async () => {
       try {
-        const githubRepos = await fetchProjectsGithub();
-
-        const githubProjects = githubRepos.map(repo => ({
-          id: repo.name,
-          name: repo.name,
-          description: repo.description || "No description available.",
-          tags: repo.topics || [],
-          imageUrl: projectsSettings[repo.name]?.icon || null,
-          projectUrl: repo.homepage,
-          githubUrl: repo.html_url,
-          npmLink: projectsSettings[repo.name]?.npmLink || null,
-          stars: repo.stargazers_count,
-          createdAt: repo.created_at,
-          updatedAt: repo.updated_at,
-          source: "github",
-          order: projectsSettings[repo.name]?.order || 0,
-          onGoing: projectsSettings[repo.name]?.onGoing || false,
-        }));
-
-        const combinedProjects = [...otherProjects, ...githubProjects].filter(project => !projectsSettings[project.id]?.skip).sort((a, b) => {
-          const aOrder = a.order || Infinity;
-          const bOrder = b.order || Infinity;
-          if (aOrder !== bOrder) {
-            return aOrder - bOrder; 
-          }
-
-          const aGoing = a.onGoing || false;
-          const bGoing = b.onGoing || false;
-          if (aGoing !== bGoing) {
-            return Number(bGoing) - Number(aGoing);
-          }
-
-          const aStars = a.stars || 0;
-          const bStars = b.stars || 0;
-          if (aStars !== bStars) {
-            return bStars - aStars;
-          }
-
-          const aUpdatedDate = new Date(a.updatedAt || 0);
-          const bUpdatedDate = new Date(b.updatedAt || 0);
-          if (aUpdatedDate.getTime() !== bUpdatedDate.getTime()) {
-            return bUpdatedDate - aUpdatedDate;
-          }
-
-          const aCreatedDate = new Date(a.createdAt || 0);
-          const bCreatedDate = new Date(b.createdAt || 0);
-          if (aCreatedDate.getTime() !== bCreatedDate.getTime()) {
-            return bCreatedDate - aCreatedDate;
-          }
-
-          return a.name.localeCompare(b.name);
+        const timerPromise = new Promise((resolve) => setTimeout(resolve, 2500));
+        const githubPromise = axios.get('https://api.github.com/users/pordarman/repos?sort=updated', {
+          headers: { Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}` }
         });
 
-        setAllProjects(combinedProjects);
-        setFilteredProjects(combinedProjects);
-      } catch (err) {
-        const errorMessage = err.response
-          ? `Error: ${err.response.status} - ${err.response.data.message}`
-          : `An error occurred: ${err.message}`;
-        setError(errorMessage);
+        const [githubResponse] = await Promise.all([githubPromise, timerPromise]);
+
+        if (githubResponse.status === 200) {
+          const githubData = githubResponse.data;
+          console.log(githubData);
+
+          const formattedGithubData = githubData.map(repo => ({
+            ...repo,
+            topics: repo.topics || [],
+            source: 'github',
+            isLocal: false
+          }));
+
+          const combinedProjects = [...localProjects, ...formattedGithubData];
+
+          const sortedProjects = combinedProjects.sort((a, b) => {
+            const aOrder = a.order || Infinity;
+            const bOrder = b.order || Infinity;
+            if (aOrder !== bOrder) return aOrder - bOrder;
+
+            if (a.onGoing && !b.onGoing) return -1;
+            if (!a.onGoing && b.onGoing) return 1;
+            return 0;
+          });
+
+          setProjects(sortedProjects);
+        } else {
+          setProjects(localProjects);
+        }
+      } catch {
+        setProjects(localProjects);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
-    }
-    fetchProjects();
+    };
+
+    fetchAllProjects();
   }, []);
 
-  useEffect(() => {
-    const words = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
-    const resultProjects = [];
+  const filteredProjects = useMemo(() => {
+    if (!searchQuery.trim()) return projects;
+    const lowerQuery = searchQuery.toLowerCase();
 
-    function checkWord(project, word) {
-      return (
-        (searchIn.name && project.name && project.name.toLowerCase().includes(word)) ||
-        (searchIn.description && project.description && project.description.toLowerCase().includes(word)) ||
-        (searchIn.tags && project.tags && project.tags.some(tag => tag.toLowerCase().includes(word)))
-      );
-    }
+    return projects.filter((project) => {
+      const matchName = project.name?.toLowerCase().includes(lowerQuery);
+      const matchDesc = project.description?.toLowerCase().includes(lowerQuery);
+      const matchTopics = project.topics?.some(topic => topic.toLowerCase().includes(lowerQuery));
+      return matchName || matchDesc || matchTopics;
+    });
+  }, [searchQuery, projects]);
 
-    function setDateToEnd(dateString) {
-      const date = new Date(dateString);
-      date.setHours(23, 59, 59, 999);
-      return date;
-    }
-
-    for (const project of allProjects) {
-      if (
-        (words.length > 0 && !words.every(word => checkWord(project, word))) ||
-        (dateFilters.created.start && new Date(project.createdAt) < new Date(dateFilters.created.start)) ||
-        (dateFilters.created.end && new Date(project.createdAt) > setDateToEnd(dateFilters.created.end)) ||
-        (dateFilters.updated.start && new Date(project.updatedAt) < new Date(dateFilters.updated.start)) ||
-        (dateFilters.updated.end && new Date(project.updatedAt) > setDateToEnd(dateFilters.updated.end))
-      ) {
-        continue; 
-      }
-      resultProjects.push(project);
-    }
-
-    setFilteredProjects(resultProjects);
-  }, [searchQuery, searchIn, dateFilters, allProjects]);
-
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setSearchIn(prev => ({ ...prev, [name]: checked }));
-  };
-
-  const handleDateChange = (e, type, range) => {
-    const { value } = e.target;
-    setDateFilters(prev => ({
-      ...prev,
-      [type]: { ...prev[type], [range]: value }
-    }));
-  };
-
-  const resetFilters = () => {
-    setSearchQuery("");
-    setSearchIn({ name: true, description: true, tags: true });
-    setDateFilters({ created: { start: "", end: "" }, updated: { start: "", end: "" } });
-    if(document.getElementById("search-input")) document.getElementById("search-input").value = "";
-  };
-
-  if (loading) {
-    return <div className="min-h-screen pt-32 text-center text-slate-800 dark:text-white text-xl flex justify-center">Loading projects...</div>;
-  }
-
-  if (error) {
-    return <div className="min-h-screen pt-32 text-center text-red-500 text-xl">{error}</div>;
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex flex-col items-center justify-center bg-[#0f172a] relative overflow-hidden">
+        <div className="relative w-[800px] h-[800px] flex items-center justify-center">
+          <Radar
+            color="#3b82f6"
+            backgroundColor="#0f172a"
+            speed={1.5}
+            scale={1}
+            ringCount={15}
+            spokeCount={4}
+            ringThickness={0.1}
+            spokeThickness={0.01}
+            sweepSpeed={1}
+            sweepWidth={3}
+            sweepLobes={1}
+            falloff={1.6}
+            brightness={1.3}
+            enableMouseInteraction={false}
+          />
+          <h2 className="absolute bottom-12 left-1/2 -translate-x-1/2 text-blue-400 text-xl font-mono animate-pulse tracking-widest whitespace-nowrap drop-shadow-[0_0_10px_rgba(59,130,246,0.8)] z-10 pointer-events-none">
+            Fetching Projects...
+          </h2>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <section id="projects" className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300 min-h-screen">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-slate-900 dark:text-white">My Projects</h2>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">Explore all my works, applications, and open-source contributions.</p>
-        </div>
-        
-        <div className="mb-16 w-full max-w-3xl mx-auto">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-grow shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <SearchIcon />
-              </div>
-              <input
-                id="search-input"
-                type="text"
-                value={searchQuery}
-                placeholder="Search by name, description, or topic..."
-                className="w-full pl-12 pr-4 py-3 border border-slate-300 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300 shadow-sm"
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <button
-              onClick={() => setShowAdvanced(prev => !prev)}
-              className="p-3 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-sm"
-              title="Advanced Search"
-            >
-              <FilterIcon />
-            </button>
+    <div className="w-full min-h-screen pt-32 px-8 md:px-16 lg:px-24 bg-[#0f172a]">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <h1 className="text-5xl font-bold mb-4 text-white">All Projects</h1>
+            <p className="text-gray-400 text-lg max-w-2xl">
+              A collection of my local works, game development journey, and open-source GitHub repositories.
+            </p>
           </div>
 
-          <AnimatePresence>
-            {showAdvanced && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden mt-4 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="font-semibold mb-3 text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">Search In:</h4>
-                    <div className="flex flex-col gap-3">
-                      {Object.keys(searchIn).map(key => (
-                        <StyledCheckbox
-                          key={key}
-                          label={key}
-                          name={key}
-                          checked={searchIn[key]}
-                          onChange={handleCheckboxChange}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-3 text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">Date Filters:</h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Created Between:</label>
-                        <div className="flex gap-2">
-                          <input type="date" onChange={(e) => handleDateChange(e, 'created', 'start')} value={dateFilters.created.start} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:ring-cyan-500 focus:border-cyan-500" />
-                          <input type="date" onChange={(e) => handleDateChange(e, 'created', 'end')} value={dateFilters.created.end} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:ring-cyan-500 focus:border-cyan-500" />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Updated Between:</label>
-                        <div className="flex gap-2">
-                          <input type="date" onChange={(e) => handleDateChange(e, 'updated', 'start')} value={dateFilters.updated.start} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:ring-cyan-500 focus:border-cyan-500" />
-                          <input type="date" onChange={(e) => handleDateChange(e, 'updated', 'end')} value={dateFilters.updated.end} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:ring-cyan-500 focus:border-cyan-500" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 text-right">
-                  <button onClick={resetFilters} className="text-sm px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 font-medium transition-colors">
-                    Reset Filters
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="relative w-full md:w-96 group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, desc or topic..."
+              className="w-full pl-12 pr-4 py-3 bg-slate-900/80 backdrop-blur-sm border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-500 shadow-xl"
+            />
+          </div>
         </div>
 
-        {!loading && (
-          <p className="text-md text-slate-500 dark:text-slate-400 mb-12 border-b border-slate-200 dark:border-slate-800 pb-4">
-            Showing <span className="font-bold text-cyan-600 dark:text-cyan-400">{filteredProjects.length}</span> of <span className="font-bold text-slate-800 dark:text-white">{allProjects.length}</span> projects.
-          </p>
-        )}
+        {filteredProjects.length === 0 ? (
+          <div className="w-full text-center py-32 text-gray-500 text-xl font-medium border border-dashed border-white/10 rounded-3xl">
+            No projects found matching "{searchQuery}".
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+            {filteredProjects.filter((project) => !projectsSettings[project.name]?.skip && project.name != "pordarman").map((project) => (
+              <BorderGlow
+                key={project.id || project.name}
+                className="w-full h-full bg-slate-900"
+                glowColor="210 100% 60%"
+                borderRadius={16}
+              >
+                <div className="flex flex-col h-full bg-slate-900 rounded-2xl relative overflow-hidden group">
 
-        <div className="flex flex-col gap-24">
-          <AnimatePresence>
-            {filteredProjects.length !== 0 ? (
-              filteredProjects.map((project, index) => (
-                <motion.div
-                  layout
-                  key={project.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className={`flex flex-col lg:flex-row items-stretch gap-8 lg:gap-12 ${
-                    index % 2 !== 0 ? 'lg:flex-row-reverse' : ''
-                  }`}
-                >
-                  
-                  <div className="w-full lg:w-[45%] h-64 lg:h-[320px] relative group rounded-2xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center hover:shadow-cyan-500/30 transition-shadow duration-500 p-4">
-                    {project.imageUrl ? (
-                      <img 
-                        src={project.imageUrl} 
-                        alt={project.name} 
-                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" 
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                        <span className="text-6xl font-bold mb-2">{project.name.charAt(0).toUpperCase()}</span>
-                        <span className="text-lg font-medium">{project.name}</span>
+                  <div className="absolute top-0 right-0 flex z-20">
+                    {project.isLocal && (
+                      <div className="px-3 py-1 bg-blue-600/90 backdrop-blur-md text-white text-xs font-bold rounded-bl-lg">
+                        Local
                       </div>
                     )}
-
                     {project.onGoing && (
-                      <div className="absolute top-0 right-0 w-32 h-32 pointer-events-none z-10">
-                        <div className="absolute transform rotate-45 bg-red-600 text-center text-white font-semibold py-1 right-[-40px] top-[32px] w-[170px] shadow-md">
-                          On Going
-                        </div>
+                      <div className="px-3 py-1 bg-yellow-600/90 backdrop-blur-md text-white text-xs font-bold rounded-bl-lg">
+                        On Going
                       </div>
                     )}
                   </div>
 
-                  <div className="w-full lg:w-[55%] flex flex-col justify-center py-2">
-                    <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white mb-4 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
-                      <Link to={`/projects/${project.id}`} className="hover:underline">
-                        {project.name}
-                      </Link>
-                    </h3>
-                    
-                    {project.tags && project.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags.map(tag => (
-                          <span key={tag} className="px-3 py-1 bg-cyan-50 dark:bg-slate-800 text-cyan-700 dark:text-cyan-400 text-xs font-semibold rounded-full border border-cyan-200 dark:border-slate-700">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                  {(project.imageUrl || projectsSettings[project.id] || projectsSettings[project.name]) && (
+                    <div className="w-full h-48 relative overflow-hidden border-b border-white/5 flex-shrink-0">
+                      <img
+                        src={project.imageUrl || projectsSettings[project.id]?.icon || projectsSettings[project.name]?.icon}
+                        alt={project.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
+                    </div>
+                  )}
 
-                    <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-                      {project.description}
+                  <div className="flex flex-col flex-grow p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                        <Code2 className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div className="flex gap-3 relative z-10">
+                        {project.html_url && project.html_url !== '#' && (
+                          <a href={project.html_url} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-lg text-gray-400 hover:text-white hover:bg-slate-700 transition-all">
+                            <Github className="w-5 h-5" />
+                          </a>
+                        )}
+                        {((project.projectUrl && project.projectUrl !== '#') || (projectsSettings[project.name]?.projectUrl)) && (
+                          <a href={project.projectUrl || projectsSettings[project.name]?.projectUrl} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-lg text-gray-400 hover:text-white hover:bg-slate-700 transition-all">
+                            <ExternalLink className="w-7 h-7" />
+                          </a>
+                        )}
+                        {projectsSettings[project.name]?.npmLink && (
+                          <a href={projectsSettings[project.name].npmLink} target="_blank" rel="noopener noreferrer" className="p-2 bg-red-500/20 rounded-lg text-gray-400 hover:text-white hover:bg-red-500/20 transition-all">
+                            <span className="text-xs font-bold">NPM</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-white mb-3 line-clamp-2 group-hover:text-blue-400 transition-colors">
+                      {project.html_url && project.html_url !== '#' ? (
+                        <a
+                          href={project.html_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                        >
+                          {project.name}
+                        </a>
+                      ) : (
+                        <span>{project.name}</span>
+                      )}
+                    </h3>
+
+                    <p className="text-gray-400 text-sm mb-6 flex-grow line-clamp-3 leading-relaxed">
+                      {project.description || 'No description provided for this repository.'}
                     </p>
 
-                    <div className="flex flex-wrap items-center justify-between border-t border-slate-200 dark:border-slate-700 pt-6 gap-4 mt-auto">
-                      
-                      <div className="flex flex-col gap-1">
-                        {project.createdAt && (
-                          <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                            Created: {new Date(project.createdAt).toLocaleDateString()}
+                    {project.topics && project.topics.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {project.topics.slice(0, 4).map(topic => (
+                          <span key={topic} className="px-2.5 py-1 bg-slate-950 text-blue-300 text-xs font-semibold rounded-md border border-white/5">
+                            {topic}
                           </span>
-                        )}
-                        {project.updatedAt && (
-                          <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                            Updated: {new Date(project.updatedAt).toLocaleDateString()}
+                        ))}
+                        {project.topics.length > 4 && (
+                          <span className="px-2.5 py-1 bg-slate-950 text-gray-400 text-xs font-semibold rounded-md border border-white/5">
+                            +{project.topics.length - 4}
                           </span>
                         )}
                       </div>
-                      
-                      <div className="flex items-center gap-6">
-                        {project.stars > 0 && (
-                          <span className="flex items-center gap-1 text-yellow-500 font-semibold" title="GitHub Stars">
-                            ⭐ {project.stars}
-                          </span>
-                        )}
-                        {project.githubUrl && (
-                          <a href={project.githubUrl} target="_blank" rel="noreferrer" className="text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 font-bold flex items-center gap-1 transition-colors">
-                            GitHub ↗
-                          </a>
-                        )}
-                        {project.npmLink && (
-                          <a href={project.npmLink} target="_blank" rel="noreferrer" className="text-red-500 hover:text-red-400 font-bold flex items-center gap-1 transition-colors">
-                            NPM ↗
-                          </a>
-                        )}
+                    )}
+
+                    {/* Alt Bilgi Çubuğu */}
+                    <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/10">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
+                        <span className="text-sm font-bold text-gray-300 tracking-wide">
+                          {project.language || 'Markdown'}
+                        </span>
                       </div>
 
+                      <div className="flex items-center gap-4 text-gray-400 text-sm font-medium">
+                        {project.stargazers_count !== null && (
+                          <div className="flex items-center gap-1.5 hover:text-yellow-400 transition-colors">
+                            <Star className="w-4 h-4" />
+                            <span>{project.stargazers_count}</span>
+                          </div>
+                        )}
+                        {project.createdAt && (
+                          <div className="flex items-center gap-1.5" title="Start Date">
+                            <Calendar className="w-4 h-4 text-slate-500" />
+                            <span>{new Date(project.createdAt).getFullYear()}</span>
+                          </div>
+                        )}
+                        {project.updatedAt && !project.onGoing && (
+                          <div className="flex items-center gap-1.5" title="Completed">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                </motion.div>
-              ))
-            ) : (
-              <div className="w-full text-center py-20 text-slate-500 dark:text-slate-400 text-lg">
-                No projects found matching your search criteria.
-              </div>
-            )}
-          </AnimatePresence>
-        </div>
-
+                </div>
+              </BorderGlow>
+            ))}
+          </div>
+        )}
       </div>
-    </section>
+    </div>
   );
 }
-
-export default Projects;

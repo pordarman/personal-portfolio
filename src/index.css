@@ -1,13 +1,22 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-primary: #3b82f6;
+  --color-text: #f8fafc;
+  --color-muted: #94a3b8;
+}
 
-@layer base {
-  body {
-    @apply bg-slate-50 text-slate-900 transition-colors duration-300;
-  }
-  
-  .dark body {
-    @apply bg-slate-900 text-white transition-colors duration-300;
-  }
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
 }
