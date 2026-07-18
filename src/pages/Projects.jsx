@@ -24,6 +24,7 @@ const projectsSettings = {
   "alisa": {
     icon: alisaAvatar,
     onGoing: false,
+    order: 2
   },
   "Pixify": {
     icon: pixifyAvatar,
@@ -75,13 +76,13 @@ const projectsSettings = {
     icon: sudokuWeb,
     projectUrl: "https://pordarman.github.io/sudoku-pdf-generator/",
     onGoing: true,
-    order: 4,
+    order: 3,
   },
   "personal-portfolio": {
     icon: personalPortfolio,
     projectUrl: "https://alicelik.dev",
     onGoing: true,
-    order: 3,
+    order: 1,
   },
   "utaa-web": {
     icon: "https://odeme.thk.edu.tr/images/thk_logo.png",
@@ -94,6 +95,11 @@ const projectsSettings = {
   },
   "Java-Swing-Test": {
     skip: true
+  },
+  "DPP-discord-bot": {
+    icon: "https://dpp.dev/DPP-Logo.png",
+    onGoing: true,
+    order: 4,
   }
 };
 const localProjects = [
@@ -152,7 +158,6 @@ export default function Projects() {
 
         if (githubResponse.status === 200) {
           const githubData = githubResponse.data;
-          console.log(githubData);
 
           const formattedGithubData = githubData.map(repo => ({
             ...repo,

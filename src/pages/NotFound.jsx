@@ -9,8 +9,8 @@ export default function NotFound() {
     <div className="w-full h-screen relative overflow-hidden bg-[#0f172a] flex items-center justify-center text-white selection:bg-blue-500/30">
       <div className="absolute inset-0 z-0">
         <Galaxy 
-          mouseRepulsion={true}
-          mouseInteraction={true}
+          mouseRepulsion={false}
+          mouseInteraction={false}
           density={0.5}
           glowIntensity={0.4}
           saturation={0.7}
