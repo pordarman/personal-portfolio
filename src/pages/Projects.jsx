@@ -150,14 +150,14 @@ export default function Projects() {
     const fetchAllProjects = async () => {
       try {
         const timerPromise = new Promise((resolve) => setTimeout(resolve, 2500));
-        const githubPromise = axios.get('https://api.github.com/users/pordarman/repos?sort=updated', {
-          headers: { Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}` }
-        });
+        const githubPromise = fetch('/api/github');
 
         const [githubResponse] = await Promise.all([githubPromise, timerPromise]);
 
+        console.log('GitHub API Response:', githubResponse, githubResponse.status === 200);
         if (githubResponse.status === 200) {
-          const githubData = githubResponse.data;
+          const githubData = await githubResponse.json();
+          console.log('GitHub API Data:', githubData);
 
           const formattedGithubData = githubData.map(repo => ({
             ...repo,
@@ -169,9 +169,7 @@ export default function Projects() {
           const combinedProjects = [...localProjects, ...formattedGithubData];
 
           const sortedProjects = combinedProjects.sort((a, b) => {
-            const aOrder = a.order || Infinity;
-            const bOrder = b.order || Infinity;
-            if (aOrder !== bOrder) return aOrder - bOrder;
+            if ("order" in a || "order" in b) return (a.order || Infinity) - (b.order || Infinity);
 
             if (a.onGoing && !b.onGoing) return -1;
             if (!a.onGoing && b.onGoing) return 1;
@@ -180,9 +178,11 @@ export default function Projects() {
 
           setProjects(sortedProjects);
         } else {
+          console.error('Failed to fetch GitHub projects. Status:', githubResponse.status);
           setProjects(localProjects);
         }
-      } catch {
+      } catch (err) {
+        console.error('Error fetching projects:', err);
         setProjects(localProjects);
       } finally {
         setIsLoading(false);

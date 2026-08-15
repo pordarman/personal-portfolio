@@ -82,7 +82,7 @@ export default function About() {
 
           <div className="flex flex-wrap gap-4 mt-10">
             <a
-              href="/docs/cv.png"
+              href="/docs/cv.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-lg flex items-center gap-2 transition-colors"
@@ -91,8 +91,8 @@ export default function About() {
               View CV
             </a>
             <a
-              href="/docs/cv.png"
-              download="Ali_Ihsan_CV.png"
+              href="/docs/cv.pdf"
+              download="Ali_Ihsan_CV.pdf"
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg flex items-center gap-2 transition-colors"
             >
               <Download className="w-5 h-5" />

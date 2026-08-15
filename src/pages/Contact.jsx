@@ -26,11 +26,11 @@ export default function Contact() {
         setSubmitStatus(null);
 
         emailjs.sendForm(
-            import.meta.env.VITE_EMAILJS_SERVICE_ID,
-            import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+            import.meta.env.EMAILJS_SERVICE_ID,
+            import.meta.env.EMAILJS_TEMPLATE_ID,
             formRef.current,
             {
-                publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+                publicKey: import.meta.env.EMAILJS_PUBLIC_KEY
             }
         )
             .then(
