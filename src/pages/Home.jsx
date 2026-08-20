@@ -98,12 +98,14 @@ export default function Home() {
               <m.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 mb-6 md:mb-8 w-full sm:w-auto">
                 <button
                   onClick={() => navigate('/projects')}
+                  aria-label="View My Work"
                   className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   View My Work
                 </button>
                 <button
                   onClick={() => navigate('/about')}
+                  aria-label="About Me"
                   className="w-full sm:w-auto px-8 py-3 bg-transparent border border-white/30 text-white font-semibold rounded-full hover:bg-white/10 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   About Me
@@ -111,13 +113,13 @@ export default function Home() {
               </m.div>
 
               <m.div variants={itemVariants} className="flex gap-6 items-center border-t border-white/10 pt-6">
-                <a href="https://github.com/pordarman/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors hover:scale-110">
+                <a href="https://github.com/pordarman/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-transform hover:scale-110" aria-label="GitHub">
                   <Github className="w-6 h-6" />
                 </a>
-                <a href="https://www.linkedin.com/in/ali-ihsan-celik-thk/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors hover:scale-110">
+                <a href="https://www.linkedin.com/in/ali-ihsan-celik-thk/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-transform hover:scale-110" aria-label="LinkedIn">
                   <Linkedin className="w-6 h-6" />
                 </a>
-                <a href="mailto:ali.taha.celik@gmail.com" className="text-gray-400 hover:text-white transition-colors hover:scale-110">
+                <a href="mailto:ali.taha.celik@gmail.com" className="text-gray-400 hover:text-white transition-transform hover:scale-110" aria-label="Email">
                   <Mail className="w-6 h-6" />
                 </a>
               </m.div>
@@ -151,7 +153,8 @@ export default function Home() {
 
             <button
               onClick={() => navigate('/about')}
-              className="group flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-all shadow-lg hover:shadow-blue-600/30"
+              aria-label="Learn More About Me"
+              className="group flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-transform shadow-lg hover:shadow-blue-600/30"
             >
               Learn More About Me
               <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -181,7 +184,8 @@ export default function Home() {
             </p>
             <button
               onClick={() => navigate('/contact')}
-              className="flex items-center gap-3 px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-all hover:scale-105 active:scale-95"
+              aria-label="Get In Touch"
+              className="flex items-center gap-3 px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-transform hover:scale-105 active:scale-95"
             >
               <Mail className="w-5 h-5" />
               Get In Touch

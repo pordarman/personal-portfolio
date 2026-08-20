@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
+const EMPTY_ITEMS = [];
 const MAX_COLORS = 8;
 
 const frag = `
@@ -111,7 +112,7 @@ export default function ColorBends({
   style,
   rotation = 90,
   speed = 0.2,
-  colors = [],
+  colors = EMPTY_ITEMS,
   transparent = true,
   autoRotate = 0,
   scale = 1,
@@ -131,9 +132,10 @@ export default function ColorBends({
   const resizeObserverRef = useRef(null);
   const rotationRef = useRef(rotation);
   const autoRotateRef = useRef(autoRotate);
-  const pointerTargetRef = useRef(new THREE.Vector2(0, 0));
-  const pointerCurrentRef = useRef(new THREE.Vector2(0, 0));
   const pointerSmoothRef = useRef(8);
+
+  const [pointerTarget] = useState(() => new THREE.Vector2(0, 0));
+  const [pointerCurrent] = useState(() => new THREE.Vector2(0, 0));
 
   useEffect(() => {
     const container = containerRef.current;
@@ -198,10 +200,10 @@ export default function ColorBends({
 
     handleResize();
 
+    let resizeObserver;
     if ('ResizeObserver' in window) {
-      const ro = new ResizeObserver(handleResize);
-      ro.observe(container);
-      resizeObserverRef.current = ro;
+      resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(container);
     } else {
       window.addEventListener('resize', handleResize);
     }
@@ -217,29 +219,39 @@ export default function ColorBends({
       const s = Math.sin(rad);
       material.uniforms.uRot.value.set(c, s);
 
-      const cur = pointerCurrentRef.current;
-      const tgt = pointerTargetRef.current;
       const amt = Math.min(1, dt * pointerSmoothRef.current);
-      cur.lerp(tgt, amt);
-      material.uniforms.uPointer.value.copy(cur);
+      pointerCurrent.lerp(pointerTarget, amt);
+      material.uniforms.uPointer.value.copy(pointerCurrent);
       renderer.render(scene, camera);
       rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
 
     return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-      if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      renderer.setAnimationLoop(null);
+      if (resizeObserver) resizeObserver.disconnect();
       else window.removeEventListener('resize', handleResize);
+
       geometry.dispose();
       material.dispose();
       renderer.dispose();
-      renderer.forceContextLoss();
+
+      const gl = renderer.getContext();
+      if (gl) {
+        const loseContextExtension = gl.getExtension('WEBGL_lose_context');
+        if (loseContextExtension) loseContextExtension.loseContext();
+      }
+
       if (renderer.domElement && renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement);
       }
+      rendererRef.current = null;
     };
-  }, [bandWidth, frequency, intensity, iterations, mouseInfluence, noise, parallax, scale, speed, transparent, warpStrength]);
+  }, [bandWidth, frequency, intensity, iterations, mouseInfluence, noise, parallax, scale, speed, transparent, warpStrength, pointerTarget, pointerCurrent]);
 
   useEffect(() => {
     const material = materialRef.current;
@@ -304,7 +316,7 @@ export default function ColorBends({
       const rect = container.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / (rect.width || 1)) * 2 - 1;
       const y = -(((e.clientY - rect.top) / (rect.height || 1)) * 2 - 1);
-      pointerTargetRef.current.set(x, y);
+      pointerTarget.set(x, y);
     };
 
     container.addEventListener('pointermove', handlePointerMove);

@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
+import { v7 as uuid } from "uuid";
 
 export default function ArcGallery({ items }) {
   const [globalRotation, setGlobalRotation] = useState(0);
@@ -69,7 +70,7 @@ export default function ArcGallery({ items }) {
 
         return (
           <div
-            key={i}
+            key={uuid()}
             className="absolute top-10 left-1/2"
             style={{
               transform: `translate(-50%, 0) translateX(${x}px) translateY(${y}px) rotateZ(${itemAngle}deg)`,
@@ -86,13 +87,13 @@ export default function ArcGallery({ items }) {
               style={{ width: `${cardWidth}px` }}
             >
               <div
-                className="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition-all duration-300 bg-slate-900"
+                className="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition duration-300 bg-slate-900"
                 style={{ height: `${cardHeight}px` }}
               >
                 <img
                   src={item.image}
                   alt={item.text}
-                  className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500"
+                  className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-transform duration-300"
                   draggable={false}
                 />
               </div>

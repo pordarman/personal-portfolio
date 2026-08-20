@@ -37,7 +37,7 @@ export default function NotFound() {
         
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-blue-600/30 active:scale-95"
+          className="flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-transform hover:scale-105 hover:shadow-lg hover:shadow-blue-600/30 active:scale-95"
         >
           <Home className="w-5 h-5" />
           Return Home

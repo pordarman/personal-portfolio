@@ -62,17 +62,22 @@ const SideRays = ({
   useEffect(() => {
     if (!isVisible || !containerRef.current) return;
 
-    if (cleanupFunctionRef.current) {
-      cleanupFunctionRef.current();
-      cleanupFunctionRef.current = null;
-    }
+    let cancelled = false;
+    let initializationTimer = null;
+    let frameId = null;
+    let updateSize = null;
 
     const initializeWebGL = async () => {
       if (!containerRef.current) return;
 
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => {
+        initializationTimer = setTimeout(() => {
+          initializationTimer = null;
+          resolve();
+        }, 10);
+      });
 
-      if (!containerRef.current) return;
+      if (cancelled || !containerRef.current) return;
 
       const renderer = new Renderer({
         dpr: Math.min(window.devicePixelRatio, 2),
@@ -180,20 +185,20 @@ void main() {
       const mesh = new Mesh(gl, { geometry, program });
       meshRef.current = mesh;
 
-      const updateSize = () => {
-        if (!containerRef.current || !renderer) return;
-        renderer.dpr = Math.min(window.devicePixelRatio, 2);
+      updateSize = () => {
+        if (!containerRef.current || !rendererRef.current) return;
+        rendererRef.current.dpr = Math.min(window.devicePixelRatio, 2);
         const { clientWidth: w, clientHeight: h } = containerRef.current;
-        renderer.setSize(w, h);
-        uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];
+        rendererRef.current.setSize(w, h);
+        uniforms.iResolution.value = [w * rendererRef.current.dpr, h * rendererRef.current.dpr];
       };
 
       const loop = t => {
-        if (!rendererRef.current || !uniformsRef.current || !meshRef.current) return;
+        if (cancelled || !rendererRef.current || !uniformsRef.current || !meshRef.current) return;
         uniforms.iTime.value = t * 0.001;
         try {
-          renderer.render({ scene: mesh });
-          animationIdRef.current = requestAnimationFrame(loop);
+          rendererRef.current.render({ scene: meshRef.current });
+          frameId = requestAnimationFrame(loop);
         } catch {
           return;
         }
@@ -201,38 +206,35 @@ void main() {
 
       window.addEventListener('resize', updateSize);
       updateSize();
-      animationIdRef.current = requestAnimationFrame(loop);
-
-      cleanupFunctionRef.current = () => {
-        if (animationIdRef.current) {
-          cancelAnimationFrame(animationIdRef.current);
-          animationIdRef.current = null;
-        }
-        window.removeEventListener('resize', updateSize);
-        if (renderer) {
-          try {
-            const loseCtx = renderer.gl.getExtension('WEBGL_lose_context');
-            if (loseCtx) loseCtx.loseContext();
-            const canvas = renderer.gl.canvas;
-            if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
-          // eslint-disable-next-line no-unused-vars
-          } catch (e) {
-            // Handle any errors that may occur during cleanup
-          }
-        }
-        rendererRef.current = null;
-        uniformsRef.current = null;
-        meshRef.current = null;
-      };
+      frameId = requestAnimationFrame(loop);
     };
 
     initializeWebGL();
 
     return () => {
-      if (cleanupFunctionRef.current) {
-        cleanupFunctionRef.current();
-        cleanupFunctionRef.current = null;
+      cancelled = true;
+      if (initializationTimer !== null) {
+        clearTimeout(initializationTimer);
       }
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
+      if (updateSize) {
+        window.removeEventListener('resize', updateSize);
+      }
+      if (rendererRef.current) {
+        try {
+          const loseCtx = rendererRef.current.gl.getExtension('WEBGL_lose_context');
+          if (loseCtx) loseCtx.loseContext();
+          const canvas = rendererRef.current.gl.canvas;
+          if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+        } catch {
+
+        }
+      }
+      rendererRef.current = null;
+      uniformsRef.current = null;
+      meshRef.current = null;
     };
   }, [isVisible, speed, rayColor1, rayColor2, intensity, spread, origin, tilt, saturation, blend, falloff, opacity]);
 

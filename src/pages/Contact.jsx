@@ -81,7 +81,7 @@ export default function Contact() {
                     <div className="flex flex-col gap-6">
                         <a
                             href="mailto:ali.taha.celik@gmail.com"
-                            className="flex items-center gap-4 text-gray-300 hover:text-white hover:translate-x-2 transition-all group w-fit"
+                            className="flex items-center gap-4 text-gray-300 hover:text-white hover:translate-x-2 transition-transform group w-fit"
                         >
                             <div className="p-3 bg-slate-800/50 rounded-xl border border-white/5 group-hover:border-blue-500/50 transition-colors">
                                 <Mail className="w-6 h-6 text-blue-400" />
@@ -93,7 +93,7 @@ export default function Contact() {
                             href="https://www.linkedin.com/in/ali-ihsan-celik-thk/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-4 text-gray-300 hover:text-white hover:translate-x-2 transition-all group w-fit"
+                            className="flex items-center gap-4 text-gray-300 hover:text-white hover:translate-x-2 transition-transform group w-fit"
                         >
                             <div className="p-3 bg-slate-800/50 rounded-xl border border-white/5 group-hover:border-blue-500/50 transition-colors">
                                 <Linkedin className="w-6 h-6 text-blue-400" />
@@ -105,7 +105,7 @@ export default function Contact() {
                             href="https://github.com/pordarman/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-4 text-gray-300 hover:text-white hover:translate-x-2 transition-all group w-fit"
+                            className="flex items-center gap-4 text-gray-300 hover:text-white hover:translate-x-2 transition-transform group w-fit"
                         >
                             <div className="p-3 bg-slate-800/50 rounded-xl border border-white/5 group-hover:border-blue-500/50 transition-colors">
                                 <Github className="w-6 h-6 text-blue-400" />
