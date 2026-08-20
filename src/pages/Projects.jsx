@@ -1,4 +1,4 @@
-import { useState, useMemo, useSyncExternalStore } from 'react';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import Radar from '../components/Radar';
 import BorderGlow from '../components/BorderGlow';
 import { ExternalLink, Star, Code2, Search, Calendar, CheckCircle2 } from 'lucide-react';
@@ -162,6 +162,9 @@ const sortProjects = (projects) => projects.sort((a, b) => {
 const loadProjects = () => {
   if (projectsStore.promise) return projectsStore.promise;
 
+  projectsStore.isLoading = true;
+  notifyProjectsStore();
+
   projectsStore.promise = Promise.all([
     fetch('/api/github'),
     new Promise((resolve) => setTimeout(resolve, 2500)),
@@ -194,7 +197,6 @@ const loadProjects = () => {
 
 const subscribeToProjects = (listener) => {
   projectsStore.listeners.add(listener);
-  loadProjects();
   return () => projectsStore.listeners.delete(listener);
 };
 
@@ -202,11 +204,18 @@ const getProjectsSnapshot = () => projectsStore;
 
 export default function Projects() {
   const [searchQuery, setSearchQuery] = useState("");
+  
   const { projects, isLoading } = useSyncExternalStore(
     subscribeToProjects,
     getProjectsSnapshot,
     getProjectsSnapshot,
   );
+
+  useEffect(() => {
+    if (!projectsStore.promise) {
+       loadProjects();
+    }
+  }, []);
 
   const filteredProjects = useMemo(() => {
     if (!searchQuery.trim()) return projects;
