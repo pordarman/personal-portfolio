@@ -4,8 +4,7 @@ export default async function handler(req, res) {
   try {
     const response = await axios.get('https://api.github.com/users/pordarman/repos?sort=updated', {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json'
       },
     });
 
