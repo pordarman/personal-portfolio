@@ -138,6 +138,24 @@ const localProjects = [
     onGoing: true,
     order: 2,
     isLocal: true,
+  },
+  {
+    id: 'universal-unit-converter',
+    name: 'Universal Unit Converter',
+    description: 'A comprehensive, highly interactive unit converter web application designed to handle extreme scales, from quectometers to astronomical distances. It features high-precision math using Decimal.js, a custom logarithmic 3D swipe slider built with Framer Motion to visualize complex scale analogies, and a robust localization architecture (react-i18next) managing over 15,000 lines of translation data.',
+    imageUrl: converterIcon,
+    topics: ['React', 'Tailwind CSS', 'Framer Motion', 'i18next', 'Decimal.js', 'Vite'],
+    language: 'JavaScript',
+    projectUrl: null,
+    html_url: null,
+    stargazers_count: null,
+    forks_count: null,
+    source: 'local',
+    createdAt: '2026-08-01',
+    updatedAt: '2026-09-02',
+    onGoing: false,
+    order: 3,
+    isLocal: true,
   }
 ];
 
@@ -150,9 +168,7 @@ export default function Projects() {
     const fetchAllProjects = async () => {
       try {
         const timerPromise = new Promise((resolve) => setTimeout(resolve, 2500));
-        const githubPromise = axios.get('https://api.github.com/users/pordarman/repos?sort=updated', {
-          headers: { Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}` }
-        });
+        const githubPromise = fetch("/api/github");
 
         const [githubResponse] = await Promise.all([githubPromise, timerPromise]);
 
