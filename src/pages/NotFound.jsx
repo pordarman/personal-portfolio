@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <div className="w-full h-screen relative overflow-hidden bg-[#0f172a] flex items-center justify-center text-white selection:bg-blue-500/30">
       <div className="absolute inset-0 z-0">
-        <Galaxy 
+        <Galaxy
           mouseRepulsion={false}
           mouseInteraction={false}
           density={0.5}
@@ -34,7 +34,7 @@ export default function NotFound() {
         <p className="text-gray-400 text-lg md:text-xl max-w-lg mb-10 leading-relaxed">
           The page you are looking for has drifted into the vast emptiness of the digital universe. Let's get you back to familiar territory.
         </p>
-        
+
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-transform hover:scale-105 hover:shadow-lg hover:shadow-blue-600/30 active:scale-95"

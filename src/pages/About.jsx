@@ -45,12 +45,12 @@ export default function About() {
         </div>
 
         <div className="relative z-10 w-56 h-56 md:w-72 md:h-72 rounded-full overflow-hidden border border-white/10 shadow-2xl bg-slate-900 shrink-0">
-  <img
-    src={me}
-    alt="Ali İhsan"
-    className="w-full h-full object-cover"
-  />
-</div>
+          <img
+            src={me}
+            alt="Ali İhsan"
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-16 md:py-24">
@@ -58,7 +58,7 @@ export default function About() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 tracking-tight">
             About Me
           </h1>
-          
+
           <div className="space-y-6 text-lg text-gray-400 leading-relaxed">
             <p>
               Hello, I'm Ali İhsan Çelik. I'm a third-year computer engineering student at Turkish Aeronautical Association University. My GPA is 3.10/4.
