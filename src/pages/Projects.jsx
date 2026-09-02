@@ -143,7 +143,7 @@ const localProjects = [
     id: 'universal-unit-converter',
     name: 'Universal Unit Converter',
     description: 'A comprehensive, highly interactive unit converter web application designed to handle extreme scales, from quectometers to astronomical distances. It features high-precision math using Decimal.js, a custom logarithmic 3D swipe slider built with Framer Motion to visualize complex scale analogies, and a robust localization architecture (react-i18next) managing over 15,000 lines of translation data.',
-    imageUrl: converterIcon,
+    imageUrl: "https://i.hizliresim.com/aaew4jz9.png",
     topics: ['React', 'Tailwind CSS', 'Framer Motion', 'i18next', 'Decimal.js', 'Vite'],
     language: 'JavaScript',
     projectUrl: null,
