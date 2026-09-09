@@ -77,15 +77,26 @@ export default function ArcGallery({ items }) {
               transformOrigin: 'center center'
             }}
           >
-            <a
-              href={item.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={handleClick}
-              draggable={false}
-              className="flex flex-col items-center justify-start shrink-0 group block transition-transform duration-300 hover:scale-105 hover:-translate-y-4"
-              style={{ width: `${cardWidth}px` }}
-            >
+            {item.link ? (
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleClick}
+              >
+                <div
+                  className="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition duration-300 bg-slate-900"
+                  style={{ height: `${cardHeight}px` }}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.text}
+                    className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-transform duration-300"
+                    draggable={false}
+                  />
+                </div>
+              </a>
+            ) : (
               <div
                 className="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition duration-300 bg-slate-900"
                 style={{ height: `${cardHeight}px` }}
@@ -97,10 +108,7 @@ export default function ArcGallery({ items }) {
                   draggable={false}
                 />
               </div>
-              <h3 className="text-xl font-bold text-white mt-6 drop-shadow-md text-center transition-colors group-hover:text-blue-400">
-                {item.text}
-              </h3>
-            </a>
+            )}
           </div>
         );
       })}
