@@ -27,6 +27,7 @@ const Linkedin = () => (
 
 const galleryItems = [
   { image: spiritfall, text: 'Spiritfall Game', link: null },
+  { image: "https://i.hizliresim.com/aaew4jz9.png", text: "Universal Converter", link: "https://www.uniconverters.com" },
   { image: statBot, text: 'Ultimate Stat Bot', link: "https://github.com/pordarman/ultimate-stat-bot" },
   { image: alisa, text: 'Alisa', link: "https://github.com/pordarman/alisa" },
   { image: sudoku, text: 'Sudoku PDF Generator', link: "https://github.com/pordarman/sudoku-pdf-generator" },
