@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from 'react';
-import { v7 as uuid } from "uuid";
 
 export default function ArcGallery({ items }) {
   const [globalRotation, setGlobalRotation] = useState(0);
@@ -11,13 +10,15 @@ export default function ArcGallery({ items }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  
+  const N = 24;
 
   const displayItems = [];
-  while (displayItems.length < 24) {
+  while (displayItems.length < N && items.length > 0) {
     displayItems.push(...items);
   }
+  displayItems.length = N;
 
-  const N = 24;
   const isMobile = screenWidth < 768;
   const cardWidth = isMobile ? 240 : 280;
   const cardHeight = isMobile ? 280 : 320;
@@ -67,36 +68,30 @@ export default function ArcGallery({ items }) {
         const rad = (itemAngle - 90) * (Math.PI / 180);
         const x = radius * Math.cos(rad);
         const y = radius * Math.sin(rad) + radius;
+        const Wrapper = item.link ? 'a' : 'div';
 
         return (
           <div
-            key={uuid()}
+            key={`${item.link || item.image || item.text}-${i}`}
             className="absolute top-10 left-1/2"
             style={{
               transform: `translate(-50%, 0) translateX(${x}px) translateY(${y}px) rotateZ(${itemAngle}deg)`,
               transformOrigin: 'center center'
             }}
           >
-            {item.link ? (
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleClick}
-              >
-                <div
-                  className="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition duration-300 bg-slate-900"
-                  style={{ height: `${cardHeight}px` }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.text}
-                    className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-transform duration-300"
-                    draggable={false}
-                  />
-                </div>
-              </a>
-            ) : (
+            <Wrapper
+              {...(item.link
+                ? {
+                    href: item.link,
+                    target: '_blank',
+                    rel: 'noopener noreferrer'
+                  }
+                : {})}
+              onClick={handleClick}
+              draggable={false}
+              className="flex flex-col items-center justify-start shrink-0 group block transition-transform duration-300 hover:scale-105 hover:-translate-y-4"
+              style={{ width: `${cardWidth}px` }}
+            >
               <div
                 className="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition duration-300 bg-slate-900"
                 style={{ height: `${cardHeight}px` }}
@@ -108,7 +103,10 @@ export default function ArcGallery({ items }) {
                   draggable={false}
                 />
               </div>
-            )}
+              <h3 className="text-xl font-bold text-white mt-6 drop-shadow-md text-center transition-colors group-hover:text-blue-400">
+                {item.text}
+              </h3>
+            </Wrapper>
           </div>
         );
       })}
