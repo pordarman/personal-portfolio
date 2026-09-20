@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.uniconverters.com/sitemap.xml
+Sitemap: https://www.alicelik.dev/sitemap.xml
