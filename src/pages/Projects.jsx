@@ -168,16 +168,12 @@ export default function Projects() {
     const fetchAllProjects = async () => {
       try {
         const timerPromise = new Promise((resolve) => setTimeout(resolve, 2500));
-        const githubPromise = axios.get('https://api.github.com/users/pordarman/repos?sort=updated', {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
+        const githubPromise = fetch('/api/github');
 
         const [githubResponse] = await Promise.all([githubPromise, timerPromise]);
 
         if (githubResponse.status === 200) {
-          const githubData = githubResponse.data;
+          const githubData = await githubResponse.json();
 
           const formattedGithubData = githubData.map(repo => ({
             ...repo,
